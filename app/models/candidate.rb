@@ -23,6 +23,6 @@
 #
 
 class Candidate < ApplicationRecord
-  belongs_to :district
+  belongs_to :district, class_name: 'District', :foreign_key => :code_id
 end
 

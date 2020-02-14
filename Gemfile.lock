@@ -59,6 +59,7 @@ GEM
     annotate (2.7.5)
       activerecord (>= 3.2, < 7.0)
       rake (>= 10.4, < 13.0)
+    awesome_print (1.8.0)
     bootsnap (1.4.5)
       msgpack (~> 1.0)
     builder (3.2.4)
@@ -156,6 +157,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotate (~> 2.7.5)
+  awesome_print
   bootsnap (>= 1.4.2)
   byebug
   faraday (~> 0.14.0)

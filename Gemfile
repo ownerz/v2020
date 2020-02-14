@@ -46,3 +46,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # http request
 gem 'faraday', '~> 0.14.0'
+
+gem 'awesome_print'
