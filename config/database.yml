@@ -14,7 +14,7 @@ default: &default
 
 development:
   <<: *default
-  database: dealicious
+  database: v2020
   username: root 
   host: 127.0.0.1
   port: 3306
@@ -24,15 +24,16 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: dealicious
+  database: v2020
   username: root 
   host: 127.0.0.1
   port: 3306
 
 production:
   <<: *default
-  database: dealicious
+  database: v2020
   username: root 
-  host: 127.0.0.1
+  password: v2020No1! 
+  host: 10.1.0.200
   port: 3306
 
