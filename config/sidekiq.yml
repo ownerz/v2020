@@ -1,0 +1,5 @@
+---
+:concurrency: 5
+:queues:
+  - v2020
+  - v2020_mailers

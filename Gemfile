@@ -30,6 +30,9 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
+  gem 'dotenv-rails'
+  gem 'awesome_print'
+
   # gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'
   gem 'annotate', '~> 2.7.5'
 end
@@ -48,3 +51,26 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'faraday', '~> 0.14.0'
 
 gem 'awesome_print'
+
+gem 'jbuilder', '~> 2.5'
+
+# background job
+gem 'sidekiq', '~> 5.2.7'
+gem 'sidekiq-cron', '~> 1.1.0'
+gem 'rufus-scheduler', '~> 3.6.0'
+
+gem "hiredis", "~> 0.6.3"
+gem 'redis', '~> 4.0', :require => ["redis", "redis/connection/hiredis"]
+gem 'redis-namespace', '~> 1.6'
+# gem 'redis-rails'
+
+gem 'jwt', '~> 2.2', '>= 2.2.1'
+
+gem 'rack-attack', '~> 5.0'
+gem 'rack-cors', require: 'rack/cors'
+
+# pagenation
+gem 'kaminari', '~> 1.1.1'
+
+gem 'goldiloader', '~> 3.1', '>= 3.1.1'
+gem 'oj', '~> 3.9', '>= 3.9.2'
