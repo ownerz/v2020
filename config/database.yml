@@ -31,9 +31,9 @@ test:
 
 production:
   <<: *default
-  database: v2020
-  username: root 
-  password: v2020No1! 
-  host: 10.1.0.200
-  port: 3306
+  database: <%= Rails.application.credentials.dig(('production').to_sym, :database, :name) %>
+  username: <%= Rails.application.credentials.dig(('production').to_sym, :database, :user) %> 
+  password: <%= Rails.application.credentials.dig(('production').to_sym, :database, :password) %>
+  host: <%= Rails.application.credentials.dig(('production').to_sym, :database, :host) %>
+  port: <%= Rails.application.credentials.dig(('production').to_sym, :database, :port) %>
 
