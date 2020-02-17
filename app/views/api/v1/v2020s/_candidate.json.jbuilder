@@ -16,5 +16,5 @@ if candidate.present?
   json.career candidate.career
   json.criminal_record candidate.criminal_record
   json.reg_date candidate.reg_date
-  json.wiki_page candidate.wiki_page
+  # json.wiki_page candidate.wiki_page
 end

@@ -13,8 +13,10 @@ class CrawleringService
   end
 
   def crawlering()
+    remove_latest_crawling_date
 
     election = Election.find_by(code:2)
+    crawl_id = SecureRandom.hex(5)
 
     election.cities.each do |city|
       city.districts.each do |district|
@@ -23,10 +25,10 @@ class CrawleringService
 
         # p candidates
         candidates.each do |candidate|
-          c = Candidate.find_or_initialize_by(electoral_district: candidate.dig('선거구명'), 
-                                          party: candidate.dig('소속정당명'),
-                                          name: candidate.dig('성명(한자)'),
-                                          birth_date: candidate.dig('생년월일(연령)')
+          c = Candidate.find_or_initialize_by(electoral_district: candidate.dig('선거구명').gsub(' ', ''), 
+                                          party: candidate.dig('소속정당명').gsub(' ', ''),
+                                          name: candidate.dig('성명(한자)').gsub(' ', ''),
+                                          birth_date: candidate.dig('생년월일(연령)').gsub(' ', '')
                                           )
           if c.new_record?
             c.district = district
@@ -38,9 +40,10 @@ class CrawleringService
             c.career = candidate.dig('경력')
             c.criminal_record = candidate.dig('전과기록유무(건수)')
             c.reg_date = candidate.dig('등록일자')
+            c.crawl_id = crawl_id
+            c.wiki_page = get_namuwiki_page(c.name.split('(').first)
           end
           c.save!
-
           sleep 2
         end
       end
@@ -48,6 +51,16 @@ class CrawleringService
   end
 
   private
+
+  def get_namuwiki_page(username)
+    url = "https://namu.wiki/w/#{URI.encode(username)}"
+    res = http_get_request(url)
+    return res.status.eql?(200)? url : ''
+  end
+
+  def remove_latest_crawling_date
+    Candidate.where.not(crawl_id: Candidate.last.crawl_id).destroy_all
+  end
 
   def get_candidates(doc)
     table = doc.search('.table01')
