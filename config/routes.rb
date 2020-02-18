@@ -3,7 +3,6 @@ Rails.application.routes.draw do
   require 'sidekiq/web'
   require 'sidekiq/cron/web'
 
-
   def api_version(version, default = false, &routes)
     api_constraint = ApiConstraints.new(version: version, default: default)
     scope(module: "v#{version}", path: "v#{version}", constraints: api_constraint, &routes)
@@ -19,6 +18,8 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     api_version(1, true) do
+      resource :users
+
       resource :v2020, only: [:index, :show] do 
         get '/' => 'v2020s#index'
       end

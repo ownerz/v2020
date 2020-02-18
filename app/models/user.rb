@@ -3,7 +3,7 @@
 # Table name: users
 #
 #  id         :bigint           not null, primary key
-#  device_id  :string(255)
+#  device_id  :string(255)      not null
 #  age        :integer          default(0)
 #  sex        :integer          default("nothing")
 #  latitude   :float(24)        default(0.0), not null
@@ -14,6 +14,7 @@
 #
 
 class User < ApplicationRecord
+  validates :device_id, uniqueness: true
 
   enum sex: [:nothing, :man, :woman]
 

@@ -1,7 +1,7 @@
 class CreateUsers < ActiveRecord::Migration[6.0]
   def change
     create_table :users do |t|
-      t.string   :device_id
+      t.string   :device_id, null: false, index: true
       t.integer  :age, default: 0
       t.integer  :sex, default: 0
 
@@ -11,7 +11,5 @@ class CreateUsers < ActiveRecord::Migration[6.0]
       t.datetime :deleted_at
       t.timestamps
     end
-
-    add_index :users, :device_id
   end
 end

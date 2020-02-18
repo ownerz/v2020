@@ -28,4 +28,22 @@ class ApplicationController < ActionController::API
   def set_meta
     @meta = meta_status
   end
+
+  def render_response(resource: {}, meta: {})
+    meta = meta.merge(meta_status)
+    render json: resource.merge({meta: meta})
+  end
+
+  def render_error(status, message, data = nil)
+    message = message.full_messages.first if message.respond_to?('full_messages')
+    response = {
+      result: 'fail',
+      code: -1,
+      alert_type: 1,
+      result_msg: message
+    }
+    response = response.merge(data) if data
+    render json: {meta: response}, status: status
+  end
+
 end

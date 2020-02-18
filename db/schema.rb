@@ -53,7 +53,7 @@ ActiveRecord::Schema.define(version: 2020_02_17_114210) do
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
-    t.string "device_id"
+    t.string "device_id", null: false
     t.integer "age", default: 0
     t.integer "sex", default: 0
     t.float "latitude", default: 0.0, null: false

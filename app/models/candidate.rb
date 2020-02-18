@@ -20,6 +20,7 @@
 #  deleted_at         :datetime
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#  crawl_id           :string(255)      not null
 #
 
 class Candidate < ApplicationRecord
