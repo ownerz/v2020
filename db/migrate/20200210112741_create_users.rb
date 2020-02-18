@@ -11,5 +11,7 @@ class CreateUsers < ActiveRecord::Migration[6.0]
       t.datetime :deleted_at
       t.timestamps
     end
+
+    add_index :users, :device_id
   end
 end

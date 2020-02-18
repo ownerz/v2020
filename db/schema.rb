@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(version: 2020_02_17_114210) do
     t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["device_id"], name: "index_users_on_device_id"
   end
 
   add_foreign_key "candidates", "codes"

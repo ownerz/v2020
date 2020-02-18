@@ -1,0 +1,6 @@
+crawlering_job:
+  cron: '* * * * *'
+  class: 'CrawleringJob'
+  queue: v2020
+  active_job: true
+

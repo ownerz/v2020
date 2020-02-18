@@ -48,6 +48,8 @@ class CrawleringService
         end
       end
     end
+
+    return crawl_id
   end
 
   private
