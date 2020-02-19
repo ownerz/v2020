@@ -18,16 +18,19 @@ class CrawleringService
       doc = Nokogiri::HTML(get_district_info(election.code, city.code))
       districts = get_districts(doc)
 
+      pre_voting_district = nil # 여러 구가 한개의 선거구 일경우 선거구명이 nil 이다
       districts.each do |district|
-        voting_district = VotingDistrict.find_by!(name1: district.dig('선거구명'))
+        voting_district = VotingDistrict.find_by(name1: district.dig('선거구명'))
+        voting_district = pre_voting_district unless voting_district.present?
         voting_district.name2 = district.dig('구시군명')
         voting_district.save!
+        pre_voting_district = voting_district
 
         district.dig('읍면동명').split(',').each do |name|
           voting_district.districts.create(code: 0, name1: name.gsub(' ', ''))
         end
       end
-      exit
+      sleep 5
     end
   end
 
@@ -167,6 +170,7 @@ class CrawleringService
       res = con.get do |req|
         req.url url
         req.headers = headers
+        req.options.timeout = 10
       end
     rescue Faraday::Error => e
       Rails.logger.error("http_get_request error : #{e}")
@@ -181,7 +185,7 @@ class CrawleringService
       res = con.post do |req|
         req.url url
         req.headers = headers
-        req.options.timeout = 2
+        req.options.timeout = 10
         req.body = body
       end
     rescue Faraday::Error => e
