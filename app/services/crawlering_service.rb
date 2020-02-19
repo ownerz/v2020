@@ -75,6 +75,9 @@ class CrawleringService
     end
 
     return crawl_id
+
+  rescue => e
+    Rails.logger.error("Error : #{e.message}")
   end
 
   private
