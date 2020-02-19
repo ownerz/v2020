@@ -25,6 +25,11 @@
 #
 
 class Candidate < ApplicationRecord
+  has_many :photos,
+           as: :context,
+           dependent: :destroy,
+           inverse_of: :context
+
   belongs_to :voting_district, class_name: 'VotingDistrict', :foreign_key => :code_id
 end
 

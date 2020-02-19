@@ -111,8 +111,19 @@ class CrawleringService
             c.crawl_id = crawl_id
             c.candidate_no = File.basename(candidate.dig('사진'), '.*').gsub('thumbnail.', '')
             c.wiki_page = get_namuwiki_page(c.name.split('(').first)
+
           end
           c.save!
+
+          # 전과 기록
+          unless c.criminal_record.include?("없음")
+            criminal_pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
+            c.photos.create(photo_type: 'criminal', url: criminal_pdf_url) if criminal_pdf_url.present?
+          end
+
+          education_pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
+          c.photos.create(photo_type: 'education', url: education_pdf_url) if education_pdf_url.present?
+
           sleep 4
         end
       end
