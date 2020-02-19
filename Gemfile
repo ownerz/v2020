@@ -78,5 +78,5 @@ gem 'oj', '~> 3.9', '>= 3.9.2'
 # map
 gem 'geocoder'
 
-# gem 'geoip'
-gem 'maxminddb', '~> 0.1.22'
+# # gem 'geoip'
+# gem 'maxminddb', '~> 0.1.22'
