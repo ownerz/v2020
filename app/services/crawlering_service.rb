@@ -86,7 +86,7 @@ class CrawleringService
   end
 
   def remove_latest_crawling_date
-    Candidate.where.not(crawl_id: Candidate.last.crawl_id).destroy_all
+    Candidate.where.not(crawl_id: Candidate.last&.crawl_id).destroy_all
   end
 
   def get_districts(doc)
