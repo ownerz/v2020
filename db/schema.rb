@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_17_114210) do
+ActiveRecord::Schema.define(version: 2020_02_19_115921) do
 
   create_table "candidates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "code_id"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 2020_02_17_114210) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "crawl_id", null: false
+    t.string "candidate_no", default: "", null: false
     t.index ["code_id"], name: "index_candidates_on_code_id"
     t.index ["crawl_id"], name: "index_candidates_on_crawl_id"
   end

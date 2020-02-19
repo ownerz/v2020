@@ -21,6 +21,7 @@
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  crawl_id           :string(255)      not null
+#  candidate_no       :string(255)      default(""), not null
 #
 
 class Candidate < ApplicationRecord

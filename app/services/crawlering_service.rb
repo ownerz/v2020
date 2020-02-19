@@ -109,6 +109,7 @@ class CrawleringService
             c.criminal_record = candidate.dig('전과기록유무(건수)')
             c.reg_date = candidate.dig('등록일자')
             c.crawl_id = crawl_id
+            c.candidate_no = File.basename(candidate.dig('사진'), '.*').gsub('thumbnail.', '')
             c.wiki_page = get_namuwiki_page(c.name.split('(').first)
           end
           c.save!
