@@ -3,7 +3,7 @@
 module ApplicationHelper
 
   def site_name(name = nil)
-    default = 'SinsangMarket'
+    default = 'V2020'
 
     if name.present?
       @site_title = name

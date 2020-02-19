@@ -13,6 +13,8 @@ class CrawleringService
   end
 
   def crawl_districts
+    return if District.last.present?
+
     election = Election.find_by(code:2)
     election.cities.each do |city|
       doc = Nokogiri::HTML(get_district_info(election.code, city.code))
