@@ -57,7 +57,7 @@ class CrawleringService
                                           )
           if c.new_record?
             c.voting_district = district
-            c.photo = "http://info.nec.go.kr/#{candidate.dig('사진')}"
+            c.photo = "http://info.nec.go.kr#{candidate.dig('사진')}"
             c.sex = candidate.dig('성별')
             c.address = candidate.dig('주소')
             c.job = candidate.dig('직업')
