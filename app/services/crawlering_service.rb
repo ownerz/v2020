@@ -8,10 +8,15 @@ require 'open-uri'
 class CrawleringService
   # include Singleton
 
+  CRIMINAL_RECORD_REPORT_ID = 5 # 전과
+  EDUCATION_RECORD_REPORT_ID = 2 # 학력
+  ELECTION_ID = "0020200415"
+
   def initialize()
     @logger = Logger.new(STDOUT)
   end
 
+  # 지역 크롤링
   def crawl_districts
     return if District.last.present?
 
@@ -35,6 +40,44 @@ class CrawleringService
       sleep 5
     end
   end
+
+
+  # # 후보자 id 가져오는 법
+  # # 1. 사진 url 에서
+  # p = "http://info.nec.go.kr/photo_20200415/Gsg2803/Hb100136586/gicho/thumbnail.100136586.JPG"
+  # # 2. 
+  # File.basename(p, '.*').gsub('thumbnail.', '')
+
+  # 후보자 상세 크롤링(전과기록)
+  def get_criminal_report(candidate_id)
+    candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, candidate_id)
+  end
+
+  # 후보자 상세 크롤링(학력)
+  def get_education_report(candidate_id)
+    candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, candidate_id)
+  end
+
+  def candidate_detail_info(report_id, candidate_id)
+    headers = Hash.new
+    headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+    url = 'http://info.nec.go.kr/electioninfo/candidate_detail_scanSearchJson.json'
+    body = "gubun=#{report_id}&electionId=#{ELECTION_ID}&huboId=#{candidate_id}&statementId=PCRI03_candidate_scanSearch"
+    res = http_post_request url, headers, body
+    res.body
+
+    return nil unless res.status.eql?(200)
+    pdf_url = get_pdf_url(JSON.parse(res.body))
+  end
+
+  def get_pdf_url(json)
+    tif_path = json.dig('jsonResult', 'body')[0]&.dig('FILEPATH')
+    return nil unless tif_path.present?
+
+    pdf_path = "#{File.dirname(tif_path)}/#{File.basename(tif_path, ".*")}.PDF" 
+    "http://info.nec.go.kr/unielec_pdf_file/#{pdf_path}"
+  end
+
 
   def crawlering
     crawl_districts
@@ -151,7 +194,7 @@ class CrawleringService
     # file.close
     # data
     url = 'http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml'
-    body = "electionId=0020200415&requestURI=/WEB-INF/jsp/electioninfo/0020200415/bi/bigi05.jsp&topMenuId=BI&statementId=BIGI05_2&electionCode=#{election_code}&cityCode=#{city_code}"
+    body = "electionId=#{ELECTION_ID}&requestURI=/WEB-INF/jsp/electioninfo/#{ELECTION_ID}/bi/bigi05.jsp&topMenuId=BI&statementId=BIGI05_2&electionCode=#{election_code}&cityCode=#{city_code}"
     res = http_post_request url, headers, body
     res.body
   end
@@ -165,7 +208,7 @@ class CrawleringService
     # file.close
     # data
     url = 'http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml'
-    body = "electionId=0020200415&requestURI=/WEB-INF/jsp/electioninfo/0020200415/pc/pcri03_ex.jsp&topMenuId=PC&statementId=PCRI03_#2&electionCode=#{election_code}&cityCode=#{city_code}&sggCityCode=#{sgg_city_codes}"
+    body = "electionId=#{ELECTION_ID}&requestURI=/WEB-INF/jsp/electioninfo/#{ELECTION_ID}/pc/pcri03_ex.jsp&topMenuId=PC&statementId=PCRI03_#2&electionCode=#{election_code}&cityCode=#{city_code}&sggCityCode=#{sgg_city_codes}"
     res = http_post_request url, headers, body
     res.body
   end
