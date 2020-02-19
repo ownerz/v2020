@@ -37,6 +37,7 @@ class CrawleringService
   end
 
   def crawlering
+    crawl_districts
     remove_latest_crawling_date
 
     election = Election.find_by(code:2)
