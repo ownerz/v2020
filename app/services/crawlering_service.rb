@@ -69,7 +69,7 @@ class CrawleringService
             c.wiki_page = get_namuwiki_page(c.name.split('(').first)
           end
           c.save!
-          sleep 2
+          sleep 4
         end
       end
     end
