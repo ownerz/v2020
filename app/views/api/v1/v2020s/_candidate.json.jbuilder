@@ -3,7 +3,7 @@
 if candidate.present?
   json.id candidate.id
   json.district_code candidate.code_id
-  json.district_name candidate.district.name
+  json.district_name candidate.voting_district.name
   json.electoral_district candidate.electoral_district
   json.party candidate.party
   json.name candidate.name

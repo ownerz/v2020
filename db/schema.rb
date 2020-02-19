@@ -37,7 +37,8 @@ ActiveRecord::Schema.define(version: 2020_02_17_114210) do
 
   create_table "codes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "type", null: false
-    t.string "name", default: "", comment: "이름"
+    t.string "name1", default: "", comment: "이름"
+    t.string "name2", default: "", comment: "이름"
     t.integer "code", null: false, comment: "코드"
     t.bigint "parent_id"
   end

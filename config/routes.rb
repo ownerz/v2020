@@ -20,9 +20,13 @@ Rails.application.routes.draw do
     api_version(1, true) do
       resource :users
 
-      resource :v2020, only: [:index, :show] do 
-        get '/' => 'v2020s#index'
-      end
+      get 'candidates' => 'v2020s#candidates'
+      get 'cities' => 'v2020s#cities'
+      get 'voting_districts' => 'v2020s#voting_districts'
+
+      # resource :v2020, only: [:index, :show] do 
+      #   get '/' => 'v2020s#index'
+      # end
 
     end
   end

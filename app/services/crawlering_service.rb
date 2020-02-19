@@ -12,15 +12,34 @@ class CrawleringService
     @logger = Logger.new(STDOUT)
   end
 
-  def crawlering()
+  def crawl_districts
+    election = Election.find_by(code:2)
+    election.cities.each do |city|
+      doc = Nokogiri::HTML(get_district_info(election.code, city.code))
+      districts = get_districts(doc)
+
+      districts.each do |district|
+        voting_district = VotingDistrict.find_by!(name1: district.dig('선거구명'))
+        voting_district.name2 = district.dig('구시군명')
+        voting_district.save!
+
+        district.dig('읍면동명').split(',').each do |name|
+          voting_district.districts.create(code: 0, name1: name.gsub(' ', ''))
+        end
+      end
+      exit
+    end
+  end
+
+  def crawlering
     remove_latest_crawling_date
 
     election = Election.find_by(code:2)
     crawl_id = SecureRandom.hex(5)
 
     election.cities.each do |city|
-      city.districts.each do |district|
-        doc = Nokogiri::HTML(get_http_page(election.code, city.code, district.code))
+      city.voting_districts.each do |district|
+        doc = Nokogiri::HTML(get_election_info(election.code, city.code, district.code))
         candidates = get_candidates(doc)
 
         # p candidates
@@ -31,7 +50,7 @@ class CrawleringService
                                           birth_date: candidate.dig('생년월일(연령)').gsub(' ', '')
                                           )
           if c.new_record?
-            c.district = district
+            c.voting_district = district
             c.photo = "http://info.nec.go.kr/#{candidate.dig('사진')}"
             c.sex = candidate.dig('성별')
             c.address = candidate.dig('주소')
@@ -64,6 +83,29 @@ class CrawleringService
     Candidate.where.not(crawl_id: Candidate.last.crawl_id).destroy_all
   end
 
+  def get_districts(doc)
+    table = doc.search('.table01')
+  
+    column_names = table.css('thead tr th').map(&:text)
+    # print column_names
+  
+    rows = table.css('tbody tr')
+    text_all_rows = rows.map do |row|
+      row_values = []
+      row.css('td').each do |r|
+        row_values << r.text.gsub(/\t|\n|\r/, '')
+      end
+      row_values
+    end
+
+    districts = []
+    text_all_rows.each do |row_as_text|
+       districts << column_names.zip(row_as_text).to_h
+    end # =>
+
+    districts
+  end
+
   def get_candidates(doc)
     table = doc.search('.table01')
   
@@ -91,7 +133,7 @@ class CrawleringService
     candidates
   end
 
-  def get_http_page(election_code, city_code, sgg_city_codes)
+  def get_district_info(election_code, city_code)
     headers = Hash.new
     headers['Content-Type'] = 'application/x-www-form-urlencoded'
   
@@ -99,7 +141,20 @@ class CrawleringService
     # data = file.read
     # file.close
     # data
+    url = 'http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml'
+    body = "electionId=0020200415&requestURI=/WEB-INF/jsp/electioninfo/0020200415/bi/bigi05.jsp&topMenuId=BI&statementId=BIGI05_2&electionCode=#{election_code}&cityCode=#{city_code}"
+    res = http_post_request url, headers, body
+    res.body
+  end
+
+  def get_election_info(election_code, city_code, sgg_city_codes)
+    headers = Hash.new
+    headers['Content-Type'] = 'application/x-www-form-urlencoded'
   
+    # file = File.open('/Users/hyungsungshim/Workspace/myproject/ssm/v2020/a.html', "r")
+    # data = file.read
+    # file.close
+    # data
     url = 'http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml'
     body = "electionId=0020200415&requestURI=/WEB-INF/jsp/electioninfo/0020200415/pc/pcri03_ex.jsp&topMenuId=PC&statementId=PCRI03_#2&electionCode=#{election_code}&cityCode=#{city_code}&sggCityCode=#{sgg_city_codes}"
     res = http_post_request url, headers, body

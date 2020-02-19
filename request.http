@@ -1,12 +1,6 @@
 
 
 
-
-
-
-
-
-
 ###
 # user create 
 POST http://localhost:3000/api/v1/users
@@ -22,11 +16,22 @@ Content-Type: application/json
   }
 }
 
+###
+# 도시 
+GET http://localhost:3000/api/v1/cities?page=1&per=10
+Content-Type: application/json
+
+
+###
+# 선거구 
+GET http://localhost:3000/api/v1/voting_districts?page=1&per=10
+Content-Type: application/json
+
 
 
 ###
 # 후보 
-GET http://localhost:3000/api/v1/v2020?page=1&per=10
+GET http://localhost:3000/api/v1/candidates?page=1&per=10
 Content-Type: application/json
 
 
