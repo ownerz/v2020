@@ -30,6 +30,20 @@ class Candidate < ApplicationRecord
            dependent: :destroy,
            inverse_of: :context
 
+  has_many :education_photos,
+           -> { where(photo_type: 'education') },
+           class_name: 'Photo',
+           as: :context,
+           dependent: :destroy,
+           inverse_of: :context
+
+  has_many :criminal_photos,
+           -> { where(photo_type: 'criminal') },
+           class_name: 'Photo',
+           as: :context,
+           dependent: :destroy,
+           inverse_of: :context
+
   belongs_to :voting_district, class_name: 'VotingDistrict', :foreign_key => :code_id
 end
 
