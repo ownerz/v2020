@@ -82,7 +82,7 @@ class CrawleringService
 
   def crawlering
     crawl_districts
-    remove_latest_crawling_date
+    # remove_latest_crawling_date
 
     election = Election.find_by(code:2)
     crawl_id = SecureRandom.hex(5)
@@ -113,30 +113,33 @@ class CrawleringService
             c.candidate_no = File.basename(candidate.dig('사진'), '.*').gsub('thumbnail.', '')
             c.wiki_page = get_namuwiki_page(c.name.split('(').first)
 
-          end
-          c.save!
 
-          # 전과 기록
-          unless c.criminal_record.include?("없음")
-            criminal_pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
-            if criminal_pdf_url.present?
-              upload_path = "c_#{c.candidate_no}.pdf"
-              save_photo_info(c, 'criminal', criminal_pdf_url, upload_path)
+            # 전과 기록
+            unless c.criminal_record.include?("없음")
+              criminal_pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
+              if criminal_pdf_url.present?
+                upload_path = "tmp/c_#{c.candidate_no}.pdf"
+                save_photo_info(c, 'criminal', criminal_pdf_url, upload_path)
+              end
+
+              sleep 1
             end
-          end
 
-          # 학력
-          education_pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
-          if education_pdf_url.present?
-            upload_path = "e_#{c.candidate_no}.pdf"
-            save_photo_info(c, 'education', education_pdf_url, upload_path)
-          end
+            # 학력
+            education_pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
+            if education_pdf_url.present?
+              upload_path = "tmp/e_#{c.candidate_no}.pdf"
+              save_photo_info(c, 'education', education_pdf_url, upload_path)
+            end
 
-          sleep 4
+            c.save!
+          end
         end
+
+        exit
+        sleep 4
       end
     end
-
     return crawl_id
 
   rescue => e

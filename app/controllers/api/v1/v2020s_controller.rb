@@ -10,7 +10,7 @@ module Api
       def candidates
         candidate = Candidate.last
         @candidates = @district.present?? Candidate.where(voting_district: @district) : Candidate.all
-        @candidates = @candidates.where(crawl_id: candidate&.crawl_id)
+        # @candidates = @candidates.where(crawl_id: candidate&.crawl_id)
         @candidates = @candidates.page(params[:page]).per(params[:per_page])
         @meta = get_page_info(@candidates).merge(meta_status)
       end

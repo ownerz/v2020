@@ -12,7 +12,7 @@ class UploadService
     )
   end
 
-  def upload(origin_url, candidate_no)
+  def upload(origin_url, save_path)
     # url = URI("https://www.google.com/images/srpr/logo3w.png")
     url = URI(origin_url)
     Net::HTTP.start(url.host) do |http|
@@ -22,10 +22,9 @@ class UploadService
           # acl: "public-read", 
           body: resp.body, 
           bucket: "ssm-admin", 
-          key: "tmp/#{candidate_no}",
+          key: "#{save_path}",
         )
 
-        # https://d27ae9hz5eoziu.cloudfront.net/tmp/100136897
       rescue Aws::S3::Errors => ex
         Rails.logger.error("s3 upload error #{ex.message}")
       end
