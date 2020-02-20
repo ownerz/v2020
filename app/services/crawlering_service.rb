@@ -9,7 +9,7 @@ class CrawleringService
   # include Singleton
 
   CRIMINAL_RECORD_REPORT_ID = 5 # 전과
-  EDUCATION_RECORD_REPORT_ID = 2 # 학력
+  EDUCATION_RECORD_REPORT_ID = 1 # 학력
   ELECTION_ID = "0020200415"
 
   def initialize()
@@ -48,15 +48,15 @@ class CrawleringService
   # # 2. 
   # File.basename(p, '.*').gsub('thumbnail.', '')
 
-  # 후보자 상세 크롤링(전과기록)
-  def get_criminal_report(candidate_id)
-    candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, candidate_id)
-  end
+  # # 후보자 상세 크롤링(전과기록)
+  # def get_criminal_report(candidate_id)
+  #   candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, candidate_id)
+  # end
 
-  # 후보자 상세 크롤링(학력)
-  def get_education_report(candidate_id)
-    candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, candidate_id)
-  end
+  # # 후보자 상세 크롤링(학력)
+  # def get_education_report(candidate_id)
+  #   candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, candidate_id)
+  # end
 
   def candidate_detail_info(report_id, candidate_id)
     headers = Hash.new
@@ -64,10 +64,11 @@ class CrawleringService
     url = 'http://info.nec.go.kr/electioninfo/candidate_detail_scanSearchJson.json'
     body = "gubun=#{report_id}&electionId=#{ELECTION_ID}&huboId=#{candidate_id}&statementId=PCRI03_candidate_scanSearch"
     res = http_post_request url, headers, body
+    byebug
     res.body
 
     return nil unless res.status.eql?(200)
-    pdf_url = get_pdf_url(JSON.parse(res.body))
+    get_pdf_url(JSON.parse(res.body))
   end
 
   def get_pdf_url(json)
