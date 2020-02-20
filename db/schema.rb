@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_19_120852) do
+ActiveRecord::Schema.define(version: 2020_02_20_091652) do
 
   create_table "candidates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "code_id"
@@ -63,6 +63,12 @@ ActiveRecord::Schema.define(version: 2020_02_19_120852) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["context_type", "context_id"], name: "index_photos_on_context_type_and_context_id"
+  end
+
+  create_table "temp_candidates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
+    t.string "electoral_district", default: "", comment: "선거구명"
+    t.string "party", default: "", comment: "소속정당명"
+    t.string "name", default: "", comment: "성명"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|

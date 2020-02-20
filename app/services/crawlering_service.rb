@@ -83,24 +83,39 @@ class CrawleringService
   def crawlering
     crawl_districts
     # remove_latest_crawling_date
+    TempCandidate.all.destroy_all
 
     election = Election.find_by(code:2)
     crawl_id = SecureRandom.hex(5)
 
     election.cities.each do |city|
-      city.voting_districts.each do |district|
-        doc = Nokogiri::HTML(get_election_info(election.code, city.code, district.code))
+      city.voting_districts.each do |voting_district|
+
+
+        ################### for test
+        city = City.last
+        voting_district = city.voting_districts.last
+        ################### for test
+
+
+        doc = Nokogiri::HTML(get_election_info(election.code, city.code, voting_district.code))
         candidates = get_candidates(doc)
 
         # p candidates
         candidates.each do |candidate|
-          c = Candidate.find_or_initialize_by(electoral_district: candidate.dig('선거구명').gsub(' ', ''), 
-                                          party: candidate.dig('소속정당명').gsub(' ', ''),
-                                          name: candidate.dig('성명(한자)').gsub(' ', ''),
+
+          electoral_district = candidate.dig('선거구명').gsub(' ', '')
+          party = candidate.dig('소속정당명').gsub(' ', '')
+          name = candidate.dig('성명(한자)').gsub(' ', '')
+
+          c = Candidate.find_or_initialize_by(electoral_district: electoral_district,
+          # c = Candidate.find_or_create_by(electoral_district: electoral_district,
+                                          party: party,
+                                          name: name,
                                           birth_date: candidate.dig('생년월일(연령)').gsub(' ', '')
                                           )
           if c.new_record?
-            c.voting_district = district
+            c.voting_district = voting_district
             c.photo = "http://info.nec.go.kr#{candidate.dig('사진')}"
             c.sex = candidate.dig('성별')
             c.address = candidate.dig('주소')
@@ -112,7 +127,7 @@ class CrawleringService
             c.crawl_id = crawl_id
             c.candidate_no = File.basename(candidate.dig('사진'), '.*').gsub('thumbnail.', '')
             c.wiki_page = get_namuwiki_page(c.name.split('(').first)
-
+            c.save!
 
             # 전과 기록
             unless c.criminal_record.include?("없음")
@@ -132,10 +147,18 @@ class CrawleringService
               save_photo_info(c, 'education', education_pdf_url, upload_path)
             end
 
-            c.save!
+          else
+
+            byebug
+            TempCandidate.create(electoral_district: electoral_district, 
+                                party: party,
+                                name: name)
           end
         end
 
+        ## Candidate 에는 있고, TempCandidate 는 없는 후보자는 삭제 해야 한다. 
+
+        byebug
         exit
         sleep 4
       end
@@ -143,6 +166,9 @@ class CrawleringService
     return crawl_id
 
   rescue => e
+
+    byebug
+
     Rails.logger.error("Error : #{e.message}")
   end
 
