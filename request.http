@@ -1,6 +1,5 @@
-# @server = http://localhost:3000
-@server = http://13.209.167.197
-000
+@server = http://localhost:3000
+# @server = http://13.209.167.197
 
 ###
 # user create 
@@ -12,8 +11,8 @@ Content-Type: application/json
     "device_id": "1110115",
     "age": 50,
     "sex": "man",
-    "latitude": 100,
-    "longitude": 200
+    "longitude": 126.973457,
+    "latitude": 37.555465
   }
 }
 
@@ -29,7 +28,8 @@ Content-Type: application/json
 
 ###
 # 후보 
-GET {{server}}/api/v1/candidates?page=1&per=10
+# GET {{server}}/api/v1/candidates?page=1&per=10&x=126.973457&y=37.555465
+GET {{server}}/api/v1/candidates?page=1&per=10&x=126.973457&y=37.555465
 Content-Type: application/json
 
 

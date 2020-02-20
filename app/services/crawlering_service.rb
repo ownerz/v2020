@@ -64,7 +64,6 @@ class CrawleringService
     url = 'http://info.nec.go.kr/electioninfo/candidate_detail_scanSearchJson.json'
     body = "gubun=#{report_id}&electionId=#{ELECTION_ID}&huboId=#{candidate_id}&statementId=PCRI03_candidate_scanSearch"
     res = http_post_request url, headers, body
-    byebug
     res.body
 
     return nil unless res.status.eql?(200)
@@ -78,7 +77,6 @@ class CrawleringService
     pdf_path = "#{File.dirname(tif_path)}/#{File.basename(tif_path, ".*")}.PDF" 
     "http://info.nec.go.kr/unielec_pdf_file/#{pdf_path}"
   end
-
 
   def crawlering
     crawl_districts
