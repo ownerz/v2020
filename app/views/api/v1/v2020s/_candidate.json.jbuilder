@@ -15,6 +15,10 @@ if candidate.present?
   json.education candidate.education
   json.career candidate.career
   json.criminal_record candidate.criminal_record
+  json.criminal_photos candidate.criminal_photos, partial: 'photo', as: :photo
+  json.education_photos candidate.education_photos, partial: 'photo', as: :photo
+  # json.criminal_photos candidate.criminal_photos
+  # json.education_photos candidate.education_photos
   json.reg_date candidate.reg_date
-  # json.wiki_page candidate.wiki_page
+  json.wiki_page candidate.wiki_page
 end

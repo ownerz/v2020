@@ -80,3 +80,10 @@ gem 'geocoder'
 
 # # gem 'geoip'
 # gem 'maxminddb', '~> 0.1.22'
+
+# # photo uploader
+# gem 'carrierwave', '~> 2.0'
+# gem "fog-aws"
+
+gem 'aws-sdk', '~> 3'
+

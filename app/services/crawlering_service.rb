@@ -12,6 +12,8 @@ class CrawleringService
   EDUCATION_RECORD_REPORT_ID = 1 # 학력
   ELECTION_ID = "0020200415"
 
+  CACHE_BASE_URL = "https://d27ae9hz5eoziu.cloudfront.net"
+
   def initialize()
     @logger = Logger.new(STDOUT)
   end
@@ -117,11 +119,18 @@ class CrawleringService
           # 전과 기록
           unless c.criminal_record.include?("없음")
             criminal_pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
-            c.photos.create(photo_type: 'criminal', url: criminal_pdf_url) if criminal_pdf_url.present?
+            if criminal_pdf_url.present?
+              upload_path = "c_#{c.candidate_no}.pdf"
+              save_photo_info(c, 'criminal', criminal_pdf_url, upload_path)
+            end
           end
 
+          # 학력
           education_pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
-          c.photos.create(photo_type: 'education', url: education_pdf_url) if education_pdf_url.present?
+          if education_pdf_url.present?
+            upload_path = "e_#{c.candidate_no}.pdf"
+            save_photo_info(c, 'education', education_pdf_url, upload_path)
+          end
 
           sleep 4
         end
@@ -134,7 +143,18 @@ class CrawleringService
     Rails.logger.error("Error : #{e.message}")
   end
 
+
   private
+
+  def save_photo_info(candidate, photo_type, origin_url, upload_path)
+    begin
+      UploadService.instance.upload(origin_url, upload_path)
+      candidate.photos.create(photo_type: photo_type, url: "#{CACHE_BASE_URL}/#{upload_path}") 
+    rescue => exception
+      Rails.logger.info("upload s3 error : #{origin_url}")
+      candidate.photos.create(photo_type: photo_type, url: origin_url) 
+    end
+  end
 
   def get_namuwiki_page(username)
     url = "https://namu.wiki/w/#{URI.encode(username)}"

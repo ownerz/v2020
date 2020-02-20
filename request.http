@@ -28,8 +28,9 @@ Content-Type: application/json
 
 ###
 # 후보 
+GET {{server}}/api/v1/candidates?page=1&per=10
+# GET {{server}}/api/v1/candidates?page=1&per=10&x=126.417663&y=33.433868
 # GET {{server}}/api/v1/candidates?page=1&per=10&x=126.973457&y=37.555465
-GET {{server}}/api/v1/candidates?page=1&per=10&x=126.973457&y=37.555465
 Content-Type: application/json
 
 
