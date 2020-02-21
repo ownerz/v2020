@@ -152,20 +152,26 @@ class CrawleringService
           end
         end
 
-        ## Candidate 에는 있고, TempCandidate 는 없는 후보자는 삭제 해야 한다. 
-
-
         sleep 4
       end
     end
-    return crawl_id
 
+    ## Candidate 에는 있고, TempCandidate 는 없는 후보자는 삭제 한다. 
+    remove_leaved_candidates
+
+    return crawl_id
   rescue => e
     Rails.logger.error("Error : #{e.message}")
   end
 
-
   private
+
+  def remove_leaved_candidates
+    records_array = ActiveRecord::Base.connection.exec_query("select * from (select candidates.id cid, tmp.id t_cid FROM candidates left outer JOIN temp_candidates tmp ON tmp.electoral_district = candidates.electoral_district and tmp.party = candidates.party and tmp.name = candidates.name) results where results.t_cid is NULL")
+    records_array.each do |record|
+      Candidate.find(record.dig('cid')).destroy
+    end
+  end
 
   def save_photo_info(candidate, photo_type, origin_url, upload_path)
     begin
