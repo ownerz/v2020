@@ -1,5 +1,5 @@
-# @server = http://localhost:3000
-@server = http://13.209.167.197
+@server = http://localhost:3000
+# @server = http://13.209.167.197
 
 ###
 # user create 
@@ -16,6 +16,66 @@ Content-Type: application/json
   }
 }
 
+### 
+# like candidate
+PUT {{server}}/api/v1/users/likes
+Content-Type: application/json
+device-id: 1110115
+
+{
+  "data": {
+    "candidate_id": 19
+  }
+}
+
+###############################################
+### 
+# create comment 
+POST {{server}}/api/v1/candidates/18/comments
+Content-Type: application/json
+device-id: 1110115
+
+{
+  "data": {
+    "body": "bbbbbbccc"
+  }
+}
+
+
+### 후보자 comment list
+GET {{server}}/api/v1/candidates/18/comments
+Content-Type: application/json
+device-id: 1110115
+
+
+### 
+# update comment 
+PUT {{server}}/api/v1/comments/2
+Content-Type: application/json
+device-id: 1110115
+
+{
+  "data": {
+    "body": "bbbbbbccc"
+  }
+}
+
+### 
+# delete comment 
+DELETE {{server}}/api/v1/comments/3
+Content-Type: application/json
+device-id: 1110115
+
+
+### 
+# my comments
+GET {{server}}/api/v1/comments
+Content-Type: application/json
+device-id: 1110115
+
+
+###############################################
+
 ###
 # 도시 
 GET {{server}}/api/v1/cities?page=1&per=10
@@ -27,9 +87,9 @@ GET {{server}}/api/v1/voting_districts?page=1&per=10
 Content-Type: application/json
 
 ###
-# 후보 
-# GET {{server}}/api/v1/candidates?page=1&per=10
-GET {{server}}/api/v1/candidates?page=1&per=10&x=126.417663&y=33.433868
+# 후보 list
+GET {{server}}/api/v1/candidates?page=1&per=10
+# GET {{server}}/api/v1/candidates?page=1&per=10&x=129.014032&y=35.412894
 # GET {{server}}/api/v1/candidates?page=1&per=10&x=126.973457&y=37.555465
 Content-Type: application/json
 

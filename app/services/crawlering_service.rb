@@ -167,6 +167,7 @@ class CrawleringService
   private
 
   def remove_leaved_candidates
+    return if TempCandidate.all.size < 1
     records_array = ActiveRecord::Base.connection.exec_query("select * from (select candidates.id cid, tmp.id t_cid FROM candidates left outer JOIN temp_candidates tmp ON tmp.electoral_district = candidates.electoral_district and tmp.party = candidates.party and tmp.name = candidates.name) results where results.t_cid is NULL")
     records_array.each do |record|
       Candidate.find(record.dig('cid')).destroy

@@ -18,15 +18,35 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     api_version(1, true) do
-      resource :users
+      resource :users do
+        member do
+          put 'likes' => 'users#like_candidate'
+        end
 
-      get 'candidates' => 'v2020s#candidates'
+        # # # resource :comments
+        # member do
+        #   resource :comments, only: [:create, :show], module: :candidates do
+        #     member do
+        #       delete ':id' => 'comments#destroy'
+        #     end
+        #   end
+        # end
+      end
+
+      # resource :comments, only: [:destroy, :show]
+      delete 'comments/:id' => 'comments#destroy'
+      get 'comments/:id' => 'comments#show'
+      put 'comments/:id' => 'comments#update'
+      get 'comments' => 'comments#index' # my comments
+
+      resource :candidates do
+        get '/' => 'candidates#index'
+        get ':id/comments' => 'candidates#show_comments'
+        post ':id/comments' => 'candidates#create_comments'
+      end
+
       get 'cities' => 'v2020s#cities'
       get 'voting_districts' => 'v2020s#voting_districts'
-
-      # resource :v2020, only: [:index, :show] do 
-      #   get '/' => 'v2020s#index'
-      # end
 
     end
   end

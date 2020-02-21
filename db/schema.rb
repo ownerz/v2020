@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_20_091652) do
+ActiveRecord::Schema.define(version: 2020_02_21_070239) do
 
   create_table "candidates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "code_id"
@@ -42,6 +42,18 @@ ActiveRecord::Schema.define(version: 2020_02_20_091652) do
     t.string "name2", default: "", comment: "이름"
     t.integer "code", null: false, comment: "코드"
     t.bigint "parent_id"
+  end
+
+  create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
+    t.string "commentable_type"
+    t.bigint "commentable_id"
+    t.bigint "user_id"
+    t.text "body"
+    t.datetime "deleted_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable_type_and_commentable_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "likes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
@@ -84,5 +96,6 @@ ActiveRecord::Schema.define(version: 2020_02_20_091652) do
   end
 
   add_foreign_key "candidates", "codes"
+  add_foreign_key "comments", "users"
   add_foreign_key "likes", "users"
 end
