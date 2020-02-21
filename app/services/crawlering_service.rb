@@ -91,12 +91,10 @@ class CrawleringService
     election.cities.each do |city|
       city.voting_districts.each do |voting_district|
 
-
-        ################### for test
-        city = City.last
-        voting_district = city.voting_districts.last
-        ################### for test
-
+        # ################### for test
+        # city = City.last
+        # voting_district = city.voting_districts.last
+        # ################### for test
 
         doc = Nokogiri::HTML(get_election_info(election.code, city.code, voting_district.code))
         candidates = get_candidates(doc)
@@ -146,10 +144,8 @@ class CrawleringService
               upload_path = "tmp/e_#{c.candidate_no}.pdf"
               save_photo_info(c, 'education', education_pdf_url, upload_path)
             end
-
           else
 
-            byebug
             TempCandidate.create(electoral_district: electoral_district, 
                                 party: party,
                                 name: name)
@@ -158,17 +154,13 @@ class CrawleringService
 
         ## Candidate 에는 있고, TempCandidate 는 없는 후보자는 삭제 해야 한다. 
 
-        byebug
-        exit
+
         sleep 4
       end
     end
     return crawl_id
 
   rescue => e
-
-    byebug
-
     Rails.logger.error("Error : #{e.message}")
   end
 
