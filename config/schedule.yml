@@ -1,5 +1,5 @@
 crawlering_job:
-  cron: '00 1 * * *'
+  cron: '15 10 * * *'
   class: 'CrawleringJob'
   queue: v2020
   active_job: true
