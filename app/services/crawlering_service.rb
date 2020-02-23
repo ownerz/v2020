@@ -152,12 +152,16 @@ class CrawleringService
           end
         end
 
+        ## 
+        # 삭제 대상 후보를 아래와 같이 바꾸자.
+        # Candidate.where(voting_district: voting_district) - candidates
+
         sleep 4
       end
     end
 
-    ## Candidate 에는 있고, TempCandidate 는 없는 후보자는 삭제 한다. 
-    remove_leaved_candidates
+    # ## Candidate 에는 있고, TempCandidate 는 없는 후보자는 삭제 한다. 
+    # remove_leaved_candidates
 
     return crawl_id
   rescue => e
