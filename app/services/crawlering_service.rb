@@ -99,18 +99,21 @@ class CrawleringService
         doc = Nokogiri::HTML(get_election_info(election.code, city.code, voting_district.code))
         candidates = get_candidates(doc)
 
+        temp_candidates = []
+
         # p candidates
         candidates.each do |candidate|
 
           electoral_district = candidate.dig('선거구명').gsub(' ', '')
           party = candidate.dig('소속정당명').gsub(' ', '')
           name = candidate.dig('성명(한자)').gsub(' ', '')
+          birth_date = candidate.dig('생년월일(연령)').gsub(' ', '')
 
           c = Candidate.find_or_initialize_by(electoral_district: electoral_district,
           # c = Candidate.find_or_create_by(electoral_district: electoral_district,
                                           party: party,
                                           name: name,
-                                          birth_date: candidate.dig('생년월일(연령)').gsub(' ', '')
+                                          birth_date: birth_date
                                           )
           if c.new_record?
             c.voting_district = voting_district
@@ -145,17 +148,20 @@ class CrawleringService
               save_photo_info(c, 'education', education_pdf_url, upload_path)
             end
           else
+            temp_candidates.push({
+              party: party,
+              name: name,
+              birth_date: birth_date
+            })
 
-            TempCandidate.create(electoral_district: electoral_district, 
-                                party: party,
-                                name: name)
+            # TempCandidate.create(electoral_district: electoral_district, 
+            #                     party: party,
+            #                     name: name)
           end
         end
 
         ## 
-        # 삭제 대상 후보를 아래와 같이 바꾸자.
-        # Candidate.where(voting_district: voting_district) - candidates
-
+        remove_leaved_candidates(voting_district, temp_candidates)
         sleep 4
       end
     end
@@ -170,12 +176,22 @@ class CrawleringService
 
   private
 
-  def remove_leaved_candidates
-    return if TempCandidate.all.size < 1
-    records_array = ActiveRecord::Base.connection.exec_query("select * from (select candidates.id cid, tmp.id t_cid FROM candidates left outer JOIN temp_candidates tmp ON tmp.electoral_district = candidates.electoral_district and tmp.party = candidates.party and tmp.name = candidates.name) results where results.t_cid is NULL")
-    records_array.each do |record|
-      Candidate.find(record.dig('cid')).destroy
+  def remove_leaved_candidates(voting_district, temp_candidates)
+    Candidate.where(voting_district: voting_district).each do |c1|
+      leaved_candidate = true
+      temp_candidates.each do |c2|
+        if c1.party == c2[:party] && c1.name == c2[:name] && c1.birth_date == c2[:birth_date]
+          leaved_candidate = false
+          break
+        end
+      end
+      c1.destroy if leaved_candidate == true
     end
+    # return if TempCandidate.all.size < 1
+    # records_array = ActiveRecord::Base.connection.exec_query("select * from (select candidates.id cid, tmp.id t_cid FROM candidates left outer JOIN temp_candidates tmp ON tmp.electoral_district = candidates.electoral_district and tmp.party = candidates.party and tmp.name = candidates.name) results where results.t_cid is NULL")
+    # records_array.each do |record|
+    #   Candidate.find(record.dig('cid')).destroy
+    # end
   end
 
   def save_photo_info(candidate, photo_type, origin_url, upload_path)
