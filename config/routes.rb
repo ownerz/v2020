@@ -41,6 +41,7 @@ Rails.application.routes.draw do
 
       resource :candidates do
         get '/' => 'candidates#index'
+        get ':id' => 'candidates#show'
         get ':id/comments' => 'candidates#show_comments'
         post ':id/comments' => 'candidates#create_comments'
       end

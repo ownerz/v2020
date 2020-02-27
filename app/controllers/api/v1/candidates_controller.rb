@@ -7,7 +7,7 @@ module Api
       before_action :get_district, only: [:index]
 
       before_action :set_current_user, only: %i[show_comments create_comments]
-      before_action :set_candidate, only: %i[show_comments create_comments]
+      before_action :set_candidate, only: %i[show_comments create_comments show]
 
       # candidate list
       def index
@@ -17,6 +17,8 @@ module Api
         @candidates = @candidates.page(params[:page]).per(params[:per_page])
         @meta = get_page_info(@candidates).merge(meta_status)
       end
+
+      def show; end
 
       def create_comments
         @current_user.comments.create(comment_params)
