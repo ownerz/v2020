@@ -10,11 +10,6 @@ module Api
         @current_user = User.new(user_params)
         @current_user.save!
 
-        # if @user.save
-        #   render_response(resource: {data: @user})
-        # else
-        #   render_error :unprocessable_entity, @user.errors
-        # end
       rescue => e
         render_error :unprocessable_entity, e
       end
