@@ -1,16 +1,16 @@
-@server = http://localhost:3000
-# @server = http://13.209.167.197
+# @server = http://localhost:3000
+@server = http://13.209.167.197
 
 ###
 # user create 
-POST http://localhost:3000/api/v1/users
+POST {{server}}/api/v1/users
 Content-Type: application/json
 
 {
   "data": {
     "device_id": "1110115",
     "age": 50,
-    "sex": "man",
+    "sex": 111,
     "longitude": 126.973457,
     "latitude": 37.555465
   }
