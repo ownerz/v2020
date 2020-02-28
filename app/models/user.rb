@@ -4,8 +4,8 @@
 #
 #  id         :bigint           not null, primary key
 #  device_id  :string(255)      not null
-#  age        :integer          default(0)
-#  sex        :integer          default("nothing")
+#  age        :integer          default("twenteen")
+#  sex        :integer          default("woman")
 #  latitude   :float(24)        default(0.0), not null
 #  longitude  :float(24)        default(0.0), not null
 #  deleted_at :datetime
@@ -16,7 +16,8 @@
 class User < ApplicationRecord
   validates :device_id, uniqueness: true
 
-  enum sex: [:nothing, :man, :woman]
+  enum age: [:twenteen , :thirty, :fourty, :fifty, :sixty]
+  enum sex: [:woman, :man]
 
   # user likes someone
   has_many :likes, dependent: :destroy

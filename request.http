@@ -1,5 +1,5 @@
-# @server = http://localhost:3000
-@server = http://13.209.167.197
+@server = http://localhost:3000
+# @server = http://13.209.167.197
 
 ###
 # user create 
@@ -8,11 +8,9 @@ Content-Type: application/json
 
 {
   "data": {
-    "device_id": "1110115",
-    "age": 50,
-    "sex": 111,
-    "longitude": 126.973457,
-    "latitude": 37.555465
+    "device_id": "1110110",
+    "age": 0,
+    "sex": 0
   }
 }
 
