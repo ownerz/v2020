@@ -21,6 +21,8 @@ class CrawleringService
 
   # 선거인수현황 (http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml)
   def crawl_district_detail
+    return if DistrictDetail.last.present?
+
     # election = Election.find_by(code:2)
     # city = City.find_by(name1: "인천")
     # doc = Nokogiri::HTML(get_district_detail(election.code, city.code))
@@ -171,6 +173,7 @@ class CrawleringService
     crawl_districts
 
     # 지역구 상세 크롤링
+    crawl_district_detail
 
     # 현재 국회의원 정보 크롤링.
     crawl_latest_congressman
