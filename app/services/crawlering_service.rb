@@ -18,9 +18,11 @@ class CrawleringService
     @logger = Logger.new(STDOUT)
   end
 
-
   # 선거인수현황 (http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml)
   def crawl_district_detail
+
+    @logger.info('================ crawl_district_detail started ====================')
+    
     return if DistrictDetail.last.present?
 
     # election = Election.find_by(code:2)
@@ -47,16 +49,27 @@ class CrawleringService
           Rails.logger.info("crawl_district_detail electoral_district: #{electoral_district}")
 
           voting_district = VotingDistrict.find_by!(name1: electoral_district)
-          dd = DistrictDetail.find_or_initialize_by(voting_district: voting_district)
 
-          dd.district_count = district_count
-          dd.voting_district_count = voting_district_count
-          dd.population = population
-          dd.election_population = election_population
-          dd.absentee = absentee
-          dd.voting_rate = voting_rate
-          dd.households = households
-          dd.save!
+
+          DistrictDetail.create(voting_district: voting_district,
+                                district_count: district_count,
+                                voting_district_count: voting_district_count,
+                                population: population,
+                                election_population: election_population,
+                                absentee: absentee,
+                                voting_rate: voting_rate,
+                                households: households
+          )
+
+          # dd = DistrictDetail.find_or_initialize_by(voting_district: voting_district)
+          # dd.district_count = district_count
+          # dd.voting_district_count = voting_district_count
+          # dd.population = population
+          # dd.election_population = election_population
+          # dd.absentee = absentee
+          # dd.voting_rate = voting_rate
+          # dd.households = households
+          # dd.save!
           
         rescue => e
           Rails.logger.error("error from crawl_district_detail : #{e.message}")
@@ -105,9 +118,7 @@ class CrawleringService
 
       sleep 5
     end
-
   end
-
 
   # 지역 크롤링
   def crawl_districts
