@@ -35,7 +35,7 @@ class CrawleringService
       district_details = get_district_detail_table_data(doc)
       district_details.each do |district_detail|
         begin
-          electoral_district = district_detail.dig('선거구명')
+          electoral_district = district_detail.dig('선거구명').gsub(' ', '')
           district_count = district_detail.dig('읍면동수').to_i
           voting_district_count = district_detail.dig('투표구수').to_i
           population = district_detail.dig('인구수(선거인명부작성기준일 현재)').split('(').first.gsub(',','').to_i
@@ -43,6 +43,8 @@ class CrawleringService
           absentee = district_detail.dig('거소투표(부재자)신고인명부등재자수').split('(').first.gsub(',','').to_i
           voting_rate = district_detail.dig('인구대비선거인비율(%)').to_f
           households = district_detail.dig('세대수').split('(').first.gsub(',','').to_i
+
+          Rails.logger.info("crawl_district_detail electoral_district: #{electoral_district}")
 
           voting_district = VotingDistrict.find_by!(name1: electoral_district)
           dd = DistrictDetail.find_or_initialize_by(voting_district: voting_district)
@@ -57,7 +59,6 @@ class CrawleringService
           dd.save!
           
         rescue => e
-          byebug
           Rails.logger.error("error from crawl_district_detail : #{e.message}")
         end
       end
@@ -86,6 +87,8 @@ class CrawleringService
                                           party: party,
                                           name: name,
                                           birth_date: birth_date)
+
+          Rails.logger.info("crawl_latest_congressman electoral_district: #{electoral_district}")
 
           c.voting_district = VotingDistrict.find_by!(name1: electoral_district)
           c.sex = congressman.dig('성별')
@@ -169,6 +172,8 @@ class CrawleringService
   end
 
   def crawlering
+    Rails.logger.info("crawlering started!")
+
     # 지역구 정보 크롤링.
     crawl_districts
 
@@ -265,6 +270,7 @@ class CrawleringService
     # ## Candidate 에는 있고, TempCandidate 는 없는 후보자는 삭제 한다. 
     # remove_leaved_candidates
 
+    Rails.logger.info("crawlering finished!")
     return crawl_id
   rescue => e
     Rails.logger.error("Error : #{e.message}")
