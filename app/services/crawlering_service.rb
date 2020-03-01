@@ -21,10 +21,7 @@ class CrawleringService
 
   # 선거인수현황 (http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml)
   def crawl_district_detail
-
-    Rails.logger.info('================ 1.crawl_district_detail started ====================')
-    @logger.info('================ 2.crawl_district_detail started ====================')
-    Sidekiq::Logging.logger.info("================ 3.crawl_district_detail started")
+    @logger.info('================ crawl_district_detail started ====================')
     
     return if DistrictDetail.last.present?
 
@@ -49,7 +46,7 @@ class CrawleringService
           voting_rate = district_detail.dig('인구대비선거인비율(%)').to_f
           households = district_detail.dig('세대수').split('(').first.gsub(',','').to_i
 
-          Rails.logger.info("crawl_district_detail electoral_district: #{electoral_district}")
+          @logger.info("crawl_district_detail electoral_district: #{electoral_district}")
 
           voting_district = VotingDistrict.find_by!(name1: electoral_district)
 
@@ -75,7 +72,7 @@ class CrawleringService
           # dd.save!
           
         rescue => e
-          Rails.logger.error("error from crawl_district_detail : #{e.message}")
+          @logger.error("error from crawl_district_detail : #{e.message}")
         end
       end
 
@@ -85,6 +82,7 @@ class CrawleringService
 
   # 현재 국회의원 정보 크롤링 (http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml)
   def crawl_latest_congressman
+    @logger.info('================ crawl_latest_congressman started ====================')
     return if Congressman.last.present?
 
     election = Election.find_by(code:2)
@@ -104,7 +102,7 @@ class CrawleringService
                                           name: name,
                                           birth_date: birth_date)
 
-          Rails.logger.info("crawl_latest_congressman electoral_district: #{electoral_district}")
+          @logger.info("crawl_latest_congressman electoral_district: #{electoral_district}")
 
           c.voting_district = VotingDistrict.find_by!(name1: electoral_district)
           c.sex = congressman.dig('성별')
@@ -115,7 +113,7 @@ class CrawleringService
           c.save!
           
         rescue => e
-          Rails.logger.error("error from crawl_latest_congressman : #{e.message}")
+          @logger.error("error from crawl_latest_congressman : #{e.message}")
         end
       end
 
@@ -125,6 +123,7 @@ class CrawleringService
 
   # 지역 크롤링
   def crawl_districts
+    @logger.info('================ crawl_districts started ====================')
     return if District.last.present?
 
     election = Election.find_by(code:2)
@@ -134,6 +133,8 @@ class CrawleringService
 
       pre_voting_district = nil # 여러 구가 한개의 선거구 일경우 선거구명이 nil 이다
       districts.each do |district|
+        @logger.info("crawl_districts voting_district : #{district.dig('선거구명')}")
+
         voting_district = VotingDistrict.find_by(name1: district.dig('선거구명'))
         voting_district = pre_voting_district unless voting_district.present?
         voting_district.name2 = district.dig('구시군명')
@@ -186,7 +187,7 @@ class CrawleringService
   end
 
   def crawlering
-    Rails.logger.info("crawlering started!")
+    @logger.info("crawlering started!")
 
     # 지역구 정보 크롤링.
     crawl_districts
@@ -284,10 +285,10 @@ class CrawleringService
     # ## Candidate 에는 있고, TempCandidate 는 없는 후보자는 삭제 한다. 
     # remove_leaved_candidates
 
-    Rails.logger.info("crawlering finished!")
+    @logger.info("crawlering finished!")
     return crawl_id
   rescue => e
-    Rails.logger.error("Error : #{e.message}")
+    @logger.error("Error : #{e.message}")
   end
 
   private
@@ -315,7 +316,7 @@ class CrawleringService
       UploadService.instance.upload(origin_url, upload_path)
       candidate.photos.create(photo_type: photo_type, url: "#{CACHE_BASE_URL}/#{upload_path}") 
     rescue => exception
-      Rails.logger.info("upload s3 error : #{origin_url}")
+      @logger.info("upload s3 error : #{origin_url}")
       candidate.photos.create(photo_type: photo_type, url: origin_url) 
     end
   end
@@ -488,7 +489,7 @@ class CrawleringService
         req.options.timeout = 10
       end
     rescue Faraday::Error => e
-      Rails.logger.error("http_get_request error : #{e}")
+      @logger.error("http_get_request error : #{e}")
       raise Exception.new "http_get_request error url : #{url}"
     end
     res
@@ -504,7 +505,7 @@ class CrawleringService
         req.body = body
       end
     rescue Faraday::Error => e
-      Rails.logger.error("http_post_request error : #{e}")
+      @logger.error("http_post_request error : #{e}")
       raise Exception.new "http_post_request error url : #{url}"
     end
     res
