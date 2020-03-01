@@ -21,7 +21,8 @@ class CrawleringService
   # 선거인수현황 (http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml)
   def crawl_district_detail
 
-    @logger.info('================ crawl_district_detail started ====================')
+    Rails.logger.info('================ 1.crawl_district_detail started ====================')
+    @logger.info('================ 2.crawl_district_detail started ====================')
     
     return if DistrictDetail.last.present?
 
