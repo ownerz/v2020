@@ -93,6 +93,7 @@ Content-Type: application/json
 
 
 ###
+# kakao api
 GET https://dapi.kakao.com/v2/local/geo/coord2address.json?x=126.973457&y=37.555465
 Authorization: KakaoAK aaebc65e6dd5021b19da8251a4b2adc9
 

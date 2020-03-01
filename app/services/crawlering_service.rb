@@ -18,6 +18,92 @@ class CrawleringService
     @logger = Logger.new(STDOUT)
   end
 
+
+  # 선거인수현황 (http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml)
+  def crawl_district_detail
+    # election = Election.find_by(code:2)
+    # city = City.find_by(name1: "인천")
+    # doc = Nokogiri::HTML(get_district_detail(election.code, city.code))
+    # district_details = get_district_detail_table_data(doc)
+
+    election = Election.find_by(code:2)
+    election.cities.each do |city|
+      doc = Nokogiri::HTML(get_district_detail(election.code, city.code))
+
+      district_details = get_district_detail_table_data(doc)
+      district_details.each do |district_detail|
+        begin
+          electoral_district = district_detail.dig('선거구명')
+          district_count = district_detail.dig('읍면동수').to_i
+          voting_district_count = district_detail.dig('투표구수').to_i
+          population = district_detail.dig('인구수(선거인명부작성기준일 현재)').split('(').first.gsub(',','').to_i
+          election_population = district_detail.dig('확정선거인수').split('(').first.gsub(',','').to_i
+          absentee = district_detail.dig('거소투표(부재자)신고인명부등재자수').split('(').first.gsub(',','').to_i
+          voting_rate = district_detail.dig('인구대비선거인비율(%)').to_f
+          households = district_detail.dig('세대수').split('(').first.gsub(',','').to_i
+
+          voting_district = VotingDistrict.find_by!(name1: electoral_district)
+          dd = DistrictDetail.find_or_initialize_by(voting_district: voting_district)
+
+          dd.district_count = district_count
+          dd.voting_district_count = voting_district_count
+          dd.population = population
+          dd.election_population = election_population
+          dd.absentee = absentee
+          dd.voting_rate = voting_rate
+          dd.households = households
+          dd.save!
+          
+        rescue => e
+          byebug
+          Rails.logger.error("error from crawl_district_detail : #{e.message}")
+        end
+      end
+
+      sleep 5
+    end
+  end
+
+  # 현재 국회의원 정보 크롤링 (http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml)
+  def crawl_latest_congressman
+    return if Congressman.last.present?
+
+    election = Election.find_by(code:2)
+    election.cities.each do |city|
+      doc = Nokogiri::HTML(get_latest_election_info(election.code, city.code))
+
+      congressmen = get_table_data(doc)
+      congressmen.each do |congressman|
+        begin
+          electoral_district = congressman.dig('선거구명').gsub(' ', '')
+          party = congressman.dig('정당명').gsub(' ', '')
+          name = congressman.dig('성명(한자)').gsub(' ', '')
+          birth_date = congressman.dig('생년월일(연령)').gsub(' ', '')
+
+          c = Congressman.find_or_initialize_by(electoral_district: electoral_district,
+                                          party: party,
+                                          name: name,
+                                          birth_date: birth_date)
+
+          c.voting_district = VotingDistrict.find_by!(name1: electoral_district)
+          c.sex = congressman.dig('성별')
+          c.job = congressman.dig('직업')
+          c.education = congressman.dig('학력')
+          c.career = congressman.dig('경력')
+          c.voting_rate = congressman.dig('득표수(득표율)')
+          c.save!
+          
+        rescue => e
+          Rails.logger.error("error from crawl_latest_congressman : #{e.message}")
+        end
+      end
+
+      sleep 5
+    end
+
+  end
+
+
   # 지역 크롤링
   def crawl_districts
     return if District.last.present?
@@ -25,7 +111,7 @@ class CrawleringService
     election = Election.find_by(code:2)
     election.cities.each do |city|
       doc = Nokogiri::HTML(get_district_info(election.code, city.code))
-      districts = get_districts(doc)
+      districts = get_table_data(doc)
 
       pre_voting_district = nil # 여러 구가 한개의 선거구 일경우 선거구명이 nil 이다
       districts.each do |district|
@@ -81,7 +167,14 @@ class CrawleringService
   end
 
   def crawlering
+    # 지역구 정보 크롤링.
     crawl_districts
+
+    # 지역구 상세 크롤링
+
+    # 현재 국회의원 정보 크롤링.
+    crawl_latest_congressman
+
     # remove_latest_crawling_date
     TempCandidate.all.destroy_all
 
@@ -214,27 +307,78 @@ class CrawleringService
     Candidate.where.not(crawl_id: Candidate.last&.crawl_id).destroy_all
   end
 
-  def get_districts(doc)
+  def get_district_detail_table_data(doc)
     table = doc.search('.table01')
-  
     column_names = table.css('thead tr th').map(&:text)
     # print column_names
-  
+
+    rows = table.css('tbody tr')
+
+    # 3행씩 짝이다.
+    # 3행의 첫번째 행만 읽으면 된다. (단 3행의 첫번째 td 값(선거구명)이 있어야 한다. => 선거구가 없는 행은 선거구가 여러 "구시군명" 이 합쳐서 하나의 선거구 일때 이다)
+    # text_all_rows = rows.each_slice(3) do |array_of_3_items|
+    text_all_rows = rows.each_slice(3).map do |array_of_3_items|
+
+      # 첫번째 td
+      first_td_text = array_of_3_items.first.css('td')&.first&.text
+      next if first_td_text.blank? || first_td_text.eql?('합계')
+
+      row_values = []
+      array_of_3_items.first.css('td').each do |r|
+        value = r.text.gsub(/\t|\n|\r/, '') 
+        next if value.eql?('계')
+        row_values << value
+      end
+
+      row_values.compact
+    end
+    text_all_rows = text_all_rows.compact
+
+    # text_all_rows = rows.map do |row|
+    #   # 3 행씩 짝이다.
+    #   #  3행의 첫 행이 "계"(합계) 내용이다.
+    #   #  선거구명은 중간 행에 있고, 선거구가 없는 행은 선거구가 여러 "구시군명" 이 합쳐서 하나의 선거구 일때 이다.
+    #   # ######################
+    #   # if row.css('td')&.first&.text == '' || row.css('td')&.first&.text == '합계' 
+    #   #   next
+    #   # end
+    #   # ######################
+    #   row_values = []
+    #   row.css('td').each do |r|
+    #     row_values << r.text.gsub(/\t|\n|\r/, '')
+    #   end
+
+    #   row_values
+    # end
+    column_datas = []
+    text_all_rows.each do |row_as_text|
+       column_datas << column_names.zip(row_as_text).to_h
+    end # =>
+
+    column_datas
+  end
+
+  def get_table_data(doc)
+    table = doc.search('.table01')
+    column_names = table.css('thead tr th').map(&:text)
+    # print column_names
+
     rows = table.css('tbody tr')
     text_all_rows = rows.map do |row|
       row_values = []
       row.css('td').each do |r|
         row_values << r.text.gsub(/\t|\n|\r/, '')
       end
+
       row_values
     end
 
-    districts = []
+    column_datas = []
     text_all_rows.each do |row_as_text|
-       districts << column_names.zip(row_as_text).to_h
+       column_datas << column_names.zip(row_as_text).to_h
     end # =>
 
-    districts
+    column_datas
   end
 
   def get_candidates(doc)
@@ -262,6 +406,26 @@ class CrawleringService
     end # =>
 
     candidates
+  end
+
+  def get_district_detail(election_code, city_code)
+    headers = Hash.new
+    headers['Content-Type'] = 'application/x-www-form-urlencoded'
+  
+    url = 'http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml'
+    body = "electionId=0000000000&requestURI=/WEB-INF/jsp/electioninfo/0000000000/cd/cdpb02.jsp&topMenuId=CD&statementId=CDPB02_#3_2_1&oldElectionType=1&electionName=20160413&electionType=2&searchType=3&electionCode=#{election_code}&electionName=20160413&cityCode=#{city_code}&sggCityCode=-1&townCode=-1"
+    res = http_post_request url, headers, body
+    res.body
+  end
+
+  def get_latest_election_info(election_code, city_code)
+    headers = Hash.new
+    headers['Content-Type'] = 'application/x-www-form-urlencoded'
+  
+    url = 'http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml'
+    body = "electionId=0000000000&requestURI=/WEB-INF/jsp/electioninfo/0000000000/ep/epei01.jsp&topMenuId=EP&statementId=EPEI01_#1&oldElectionType=1&electionType=2&electionCode=#{election_code}&electionName=20160413&cityCode=#{city_code}"
+    res = http_post_request url, headers, body
+    res.body
   end
 
   def get_district_info(election_code, city_code)

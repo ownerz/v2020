@@ -12,7 +12,10 @@
 
 
 class VotingDistrict < Code 
-  has_many :candidates
+  has_one :district_detail, :foreign_key => :id
+  has_one :congressman, :foreign_key => :id
+
+  has_many :candidates, :foreign_key => :id
   has_many :districts, foreign_key: :parent_id
   belongs_to :city, class_name: 'City', :foreign_key => :parent_id
 end

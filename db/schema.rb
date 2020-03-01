@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_21_070239) do
+ActiveRecord::Schema.define(version: 2020_03_01_072338) do
 
   create_table "candidates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "code_id"
@@ -56,6 +56,39 @@ ActiveRecord::Schema.define(version: 2020_02_21_070239) do
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
+  create_table "congressmen", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "code_id"
+    t.string "electoral_district", default: "", comment: "선거구명"
+    t.string "party", default: "", comment: "소속정당명"
+    t.string "name", default: "", comment: "성명"
+    t.string "sex", default: "", comment: "성별"
+    t.string "birth_date", default: "", comment: "생년월일(연령)"
+    t.string "address", default: "", comment: "주소"
+    t.string "job", default: "", comment: "직업"
+    t.string "education", default: "", comment: "학력"
+    t.string "career", default: "", comment: "경력"
+    t.string "voting_rate", default: "", comment: "득표수(득표율)"
+    t.datetime "deleted_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["code_id"], name: "index_congressmen_on_code_id"
+  end
+
+  create_table "district_details", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "code_id"
+    t.integer "district_count", null: false, comment: "읍면동수"
+    t.integer "voting_district_count", null: false, comment: "투표구수"
+    t.integer "population", null: false, comment: "인구수"
+    t.integer "election_population", null: false, comment: "선거인수"
+    t.integer "absentee", null: false, comment: "거소투표(부재자) 신고인명부 등재자수"
+    t.decimal "voting_rate", precision: 5, scale: 2, null: false, comment: "인구대비 선거인 비율(%)"
+    t.integer "households", null: false, comment: "새대수"
+    t.datetime "deleted_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["code_id"], name: "index_district_details_on_code_id"
+  end
+
   create_table "likes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "context_type"
     t.bigint "context_id"
@@ -97,5 +130,7 @@ ActiveRecord::Schema.define(version: 2020_02_21_070239) do
 
   add_foreign_key "candidates", "codes"
   add_foreign_key "comments", "users"
+  add_foreign_key "congressmen", "codes"
+  add_foreign_key "district_details", "codes"
   add_foreign_key "likes", "users"
 end
