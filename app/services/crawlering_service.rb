@@ -15,7 +15,8 @@ class CrawleringService
   CACHE_BASE_URL = "https://d27ae9hz5eoziu.cloudfront.net"
 
   def initialize()
-    @logger = Logger.new(STDOUT)
+    # @logger = Logger.new(STDOUT)
+    @logger = Logger.new("log/#{Rails.env}.log")
   end
 
   # 선거인수현황 (http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml)
@@ -23,6 +24,7 @@ class CrawleringService
 
     Rails.logger.info('================ 1.crawl_district_detail started ====================')
     @logger.info('================ 2.crawl_district_detail started ====================')
+    Sidekiq::Logging.logger.info("================ 3.crawl_district_detail started")
     
     return if DistrictDetail.last.present?
 
