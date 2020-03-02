@@ -75,6 +75,8 @@ gem 'kaminari', '~> 1.1.1'
 gem 'goldiloader', '~> 3.1', '>= 3.1.1'
 gem 'oj', '~> 3.9', '>= 3.9.2'
 
+gem 'acts_as_paranoid', '~> 0.6.1'
+
 # map
 gem 'geocoder'
 

@@ -3,6 +3,8 @@
 module Api
   module V1
     class UsersController < ApplicationController
+      include AuditLog
+
       before_action :set_meta
       before_action :set_current_user, only: %i[like]
 

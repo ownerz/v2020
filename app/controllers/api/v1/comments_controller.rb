@@ -1,6 +1,8 @@
 module Api
   module V1
     class CommentsController < ApplicationController
+      include AuditLog
+
       before_action :set_comment, only: %i[destroy update]
       before_action :set_current_user
 

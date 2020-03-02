@@ -9,7 +9,7 @@
 #  population            :integer          not null
 #  election_population   :integer          not null
 #  absentee              :integer          not null
-#  voting_rate           :decimal(3, 2)    not null
+#  voting_rate           :decimal(5, 2)    not null
 #  households            :integer          not null
 #  deleted_at            :datetime
 #  created_at            :datetime         not null
