@@ -252,7 +252,7 @@ class CrawleringService
               if criminal_pdf_url.present?
                 upload_path = "tmp/c_#{c.candidate_no}.pdf"
 
-                jpg_path = PdfService.instance.convert(upload_path)
+                # jpg_path = PdfService.instance.convert(upload_path)
                 save_photo_info(c, 'criminal', criminal_pdf_url, jpg_path)
               end
 
@@ -264,10 +264,13 @@ class CrawleringService
             if education_pdf_url.present?
               upload_path = "tmp/e_#{c.candidate_no}.pdf"
               
-              jpg_path = PdfService.instance.convert(upload_path)
+              # jpg_path = PdfService.instance.convert(upload_path)
               save_photo_info(c, 'education', education_pdf_url, jpg_path)
             end
           else
+            # c.photos.each do |photo|
+            # end
+
             temp_candidates.push({
               party: party,
               name: name,
