@@ -15,6 +15,8 @@
 class Photo < ApplicationRecord
   belongs_to :context, polymorphic: true
 
-  enum photo_type: [:criminal, :education]
+  # c : criminal (범죄경력)
+  # e : education (학력)
+  enum photo_type: [:c, :e]
 
 end

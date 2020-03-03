@@ -250,8 +250,9 @@ class CrawleringService
             unless c.criminal_record.include?("없음")
               criminal_pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
               if criminal_pdf_url.present?
-                upload_path = "tmp/c_#{c.candidate_no}.pdf"
-                save_photo_info(c, 'criminal', criminal_pdf_url, upload_path)
+                save_photo(c, 'c', criminal_pdf_url)
+                # jpg_path = PdfService.instance.convert(upload_path)
+                # save_photo_info(c, 'criminal', criminal_pdf_url, upload_path)
               end
 
               sleep 1
@@ -260,10 +261,15 @@ class CrawleringService
             # 학력
             education_pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
             if education_pdf_url.present?
-              upload_path = "tmp/e_#{c.candidate_no}.pdf"
-              save_photo_info(c, 'education', education_pdf_url, upload_path)
+              # upload_path = "tmp/e_#{c.candidate_no}.pdf"
+              # jpg_path = PdfService.instance.convert(upload_path)
+              # save_photo_info(c, 'e', education_pdf_url, upload_path)
+              save_photo(c, 'e', education_pdf_url)
             end
           else
+            # c.photos.each do |photo|
+            # end
+
             temp_candidates.push({
               party: party,
               name: name,
@@ -293,6 +299,26 @@ class CrawleringService
 
   private
 
+  def save_photo(candidate, photo_type, pdf_url)
+    begin
+      # 1. pdf_url 에서 /tmp 폴더로 다운로드
+      tmp_path = "/tmp/#{photo_type}_#{candidate.candidate_no}.pdf"
+      FileService.instance.download(tmp_path, pdf_url)
+
+      # 2. /tmp 에 있는 pdf -> png 로 변환
+      png_path = PdfService.instance.convert(tmp_path)
+
+      # 3. png -> s3 로 upload
+      s3_path = "tmp/#{photo_type}_#{c.candidate_no}.png"
+      FileService.instance.upload(png_path, s3_path)
+
+      candidate.photos.create(photo_type: photo_type, url: "#{CACHE_BASE_URL}/#{s3_path}") 
+    rescue => e
+      @logger.info("전과 기록 이미지 오류 : #{e.message}")
+      candidate.photos.create(photo_type: photo_type, url: pdf_url) 
+    end
+  end
+
   def remove_leaved_candidates(voting_district, temp_candidates)
     Candidate.where(voting_district: voting_district).each do |c1|
       leaved_candidate = true
@@ -313,7 +339,7 @@ class CrawleringService
 
   def save_photo_info(candidate, photo_type, origin_url, upload_path)
     begin
-      UploadService.instance.upload(origin_url, upload_path)
+      FileService.instance.direct_upload(origin_url, upload_path)
       candidate.photos.create(photo_type: photo_type, url: "#{CACHE_BASE_URL}/#{upload_path}") 
     rescue => exception
       @logger.info("upload s3 error : #{origin_url}")
