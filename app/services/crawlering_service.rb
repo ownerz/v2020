@@ -312,10 +312,10 @@ class CrawleringService
       s3_path = "tmp/#{photo_type}_#{c.candidate_no}.png"
       FileService.instance.upload(png_path, s3_path)
 
-      candidate.photos.create(photo_type: photo_type, url: "#{CACHE_BASE_URL}/#{upload_path}") 
+      candidate.photos.create(photo_type: photo_type, url: "#{CACHE_BASE_URL}/#{s3_path}") 
     rescue => e
       @logger.info("전과 기록 이미지 오류 : #{e.message}")
-      candidate.photos.create(photo_type: photo_type, url: origin_url) 
+      candidate.photos.create(photo_type: photo_type, url: pdf_url) 
     end
   end
 
