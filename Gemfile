@@ -91,4 +91,5 @@ gem 'aws-sdk', '~> 3'
 
 # pdf to jpg
 gem 'rmagick'
+# gem "mini_magick"
 
