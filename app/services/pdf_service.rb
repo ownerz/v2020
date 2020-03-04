@@ -26,3 +26,12 @@ class PdfService
     ret.filename
   end
 end
+
+# 아래 오류 관련해서 
+# Postscript delegate failed `/tmp/c_100135498.pdf': No such file or directory @ error/pdf.c/ReadPDFImage/678
+# => 
+# https://qiita.com/tady/items/fb6927f9b0031c36332b 
+#  에 나와있는대로, ghostscript 와 ImageMagick 을 컴파일 하여 설치해도 동일한 오류가 발생함.
+#  /tmp/ 에 파일이 너무 많이 생겨서 발생하는 이슈인가??
+# 
+
