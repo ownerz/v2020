@@ -5,10 +5,10 @@
 # user create 
 POST {{server}}/api/v1/users
 Content-Type: application/json
+device-id: 1110115
 
 {
   "data": {
-    "device_id": "1110110",
     "age": 0,
     "sex": 0
   }

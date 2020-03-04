@@ -1,9 +1,9 @@
-require 'singleton'
+# require 'singleton'
 require 'rmagick'
 require 'rake'
 
 class PdfService
-  include Singleton
+  # include Singleton
 
   def initialize()
   end

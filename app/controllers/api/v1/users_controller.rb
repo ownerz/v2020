@@ -37,7 +37,9 @@ module Api
 
       def user_params
         params.require(:data)
-            .permit(:device_id, :age, :sex, :latitude, :longitude)
+            .permit(:age, :sex, :latitude, :longitude)
+            .merge(device_id: request.headers[:HTTP_DEVICE_ID])
+            # .permit(:device_id, :age, :sex, :latitude, :longitude)
       end
     end
   end

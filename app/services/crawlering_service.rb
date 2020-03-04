@@ -19,6 +19,46 @@ class CrawleringService
     @logger = Logger.new("log/#{Rails.env}.log")
   end
 
+  def pdf_to_png
+    Candidate.all.each do |candidate|
+      candidate.photos.each do |photo|
+
+        next unless File.extname(photo.url).eql?(".pdf")
+
+        photo_type = photo.photo_type
+        pdf_url = photo.url
+
+        begin
+          @logger.info("pdf_to_png] pdf url : #{pdf_url}")
+
+          # 1. pdf_url 에서 /tmp 폴더로 다운로드
+          tmp_path = "/tmp/#{photo_type}_#{candidate.candidate_no}.pdf"
+          FileService.instance.download(tmp_path, pdf_url)
+          @logger.info("pdf_to_png] #{pdf_url} 다운로드 성공: #{tmp_path}")
+
+          # 2. /tmp 에 있는 pdf -> png 로 변환
+          png_path = PdfService.new.convert(tmp_path)
+          @logger.info("pdf_to_png] png_path : #{png_path}")
+
+          # 3. png -> s3 로 upload
+          s3_path = "tmp/#{photo_type}_#{candidate.candidate_no}.png"
+          FileService.instance.upload(png_path, s3_path)
+
+          @logger.info("pdf_to_png] s3 path: #{s3_path}")
+
+          photo.update(url: "#{CACHE_BASE_URL}/#{s3_path}")
+
+          File.delete(tmp_path) 
+          File.delete(tmp_path.ext('png')) 
+
+        rescue => e
+          @logger.error("이미지 저장 실패 : #{e.message} \n")
+        end
+      end
+    end
+  end
+
+
   # 선거인수현황 (http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml)
   def crawl_district_detail
     @logger.info('================ crawl_district_detail started ====================')
@@ -309,10 +349,13 @@ class CrawleringService
       png_path = PdfService.instance.convert(tmp_path)
 
       # 3. png -> s3 로 upload
-      s3_path = "tmp/#{photo_type}_#{c.candidate_no}.png"
+      s3_path = "tmp/#{photo_type}_#{candidate.candidate_no}.png"
       FileService.instance.upload(png_path, s3_path)
 
       candidate.photos.create(photo_type: photo_type, url: "#{CACHE_BASE_URL}/#{s3_path}") 
+
+      File.delete(tmp_path) 
+      File.delete(tmp_path.ext('png')) 
     rescue => e
       @logger.info("전과 기록 이미지 오류 : #{e.message}")
       candidate.photos.create(photo_type: photo_type, url: pdf_url) 
