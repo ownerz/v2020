@@ -19,7 +19,7 @@ class CrawleringService
     @logger = Logger.new("log/#{Rails.env}.log")
   end
 
-  def pdf_to_png
+  def convert_pdf_to_png_manually
     Candidate.all.each do |candidate|
       candidate.photos.each do |photo|
 
