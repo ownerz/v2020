@@ -261,7 +261,6 @@ class CrawleringService
 
         # p candidates
         candidates.each do |candidate|
-
           electoral_district = candidate.dig('선거구명').gsub(' ', '')
           party = candidate.dig('소속정당명').gsub(' ', '')
           name = candidate.dig('성명(한자)').gsub(' ', '')
@@ -288,6 +287,8 @@ class CrawleringService
             c.wiki_page = get_namuwiki_page(c.name.split('(').first)
             c.save!
 
+            @logger.info("#{electoral_district} 선거구의 #{party} #{name} 후보자 등록")
+
             # 전과 기록
             unless c.criminal_record.include?("없음")
               criminal_pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
@@ -312,8 +313,7 @@ class CrawleringService
               save_photo_info(c, 'e', education_pdf_url)
             end
           else
-            # c.photos.each do |photo|
-            # end
+            @logger.info("기존 후보자 : #{electoral_district} 선거구의 #{party} #{name} ")
 
             temp_candidates.push({
               party: party,
@@ -328,7 +328,7 @@ class CrawleringService
         end
 
         ## 
-        remove_leaved_candidates(voting_district, temp_candidates)
+        # remove_leaved_candidates(voting_district, temp_candidates)
         sleep 4
       end
     end
@@ -353,8 +353,14 @@ class CrawleringService
           break
         end
       end
-      c1.destroy if leaved_candidate == true
+
+      if leaved_candidate == true
+        @logger.info("remove_leaved_candidates] #{c1.name} 삭제")
+        c1.destroy 
+      end
+      # c1.destroy if leaved_candidate == true
     end
+
     # return if TempCandidate.all.size < 1
     # records_array = ActiveRecord::Base.connection.exec_query("select * from (select candidates.id cid, tmp.id t_cid FROM candidates left outer JOIN temp_candidates tmp ON tmp.electoral_district = candidates.electoral_district and tmp.party = candidates.party and tmp.name = candidates.name) results where results.t_cid is NULL")
     # records_array.each do |record|
