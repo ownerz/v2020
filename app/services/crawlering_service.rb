@@ -19,6 +19,8 @@ class CrawleringService
     @logger = Logger.new("log/#{Rails.env}.log")
   end
 
+  ###################################
+  # 
   def convert_pdf_to_png_manually
     Candidate.all.each do |candidate|
       candidate.photos.each do |photo|
@@ -291,7 +293,7 @@ class CrawleringService
               criminal_pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
               if criminal_pdf_url.present?
                 save_photo(c, 'c', criminal_pdf_url)
-                # jpg_path = PdfService.instance.convert(upload_path)
+                # jpg_path = PdfService.new.convert(upload_path)
                 # save_photo_info(c, 'criminal', criminal_pdf_url, upload_path)
               end
 
@@ -302,7 +304,7 @@ class CrawleringService
             education_pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
             if education_pdf_url.present?
               # upload_path = "tmp/e_#{c.candidate_no}.pdf"
-              # jpg_path = PdfService.instance.convert(upload_path)
+              # jpg_path = PdfService.new.convert(upload_path)
               # save_photo_info(c, 'e', education_pdf_url, upload_path)
               save_photo(c, 'e', education_pdf_url)
             end
@@ -346,7 +348,7 @@ class CrawleringService
       FileService.instance.download(tmp_path, pdf_url)
 
       # 2. /tmp 에 있는 pdf -> png 로 변환
-      png_path = PdfService.instance.convert(tmp_path)
+      png_path = PdfService.new.convert(tmp_path)
 
       # 3. png -> s3 로 upload
       s3_path = "tmp/#{photo_type}_#{candidate.candidate_no}.png"
