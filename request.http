@@ -82,7 +82,8 @@ device-id: 1110115
 
 ###
 # 선거구 
-GET {{server}}/api/v1/voting_districts?page=1&per=10&x=126.973457&y=37.555465
+# GET {{server}}/api/v1/voting_districts?page=1&per=10&x=126.973457&y=37.555465
+GET {{server}}/api/v1/voting_districts?page=1&per=10
 Content-Type: application/json
 device-id: 1110115
 

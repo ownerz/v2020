@@ -23,4 +23,8 @@ if candidate.present?
   # json.education_photos candidate.education_photos
   json.reg_date candidate.reg_date
   json.wiki_page candidate.wiki_page
+
+  # 내가 좋아요 한 후보인지.
+  # json.liked @current_user.liked_candidates.include?(candidate)
+  json.liked @liked_candidates.include?(candidate.id)
 end

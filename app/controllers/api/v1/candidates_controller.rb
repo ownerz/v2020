@@ -8,11 +8,13 @@ module Api
       before_action :set_meta
       before_action :set_district, only: [:index]
 
-      before_action :set_current_user, only: %i[show_comments create_comments]
+      before_action :set_current_user, only: %i[show_comments create_comments index]
       before_action :set_candidate, only: %i[show_comments create_comments show]
 
       # candidate list
       def index
+        @liked_candidates = @current_user.liked_candidates.pluck('id')
+
         # candidate = Candidate.last
         @candidates = @district.present?? Candidate.where(voting_district: @district) : Candidate.all
         # @candidates = @candidates.where(crawl_id: candidate&.crawl_id)
