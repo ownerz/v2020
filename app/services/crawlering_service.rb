@@ -312,15 +312,13 @@ class CrawleringService
               # save_photo(c, 'e', education_pdf_url)
               save_photo_info(c, 'e', education_pdf_url)
             end
-          else
-            @logger.info("기존 후보자 : #{electoral_district} 선거구의 #{party} #{name} ")
 
+            @logger.info("크롤된된 후보자 : #{electoral_district} 선거구의 #{party} #{name} ")
             temp_candidates.push({
               party: party,
               name: name,
               birth_date: birth_date
             })
-
             # TempCandidate.create(electoral_district: electoral_district, 
             #                     party: party,
             #                     name: name)
@@ -328,7 +326,7 @@ class CrawleringService
         end
 
         ## 
-        # remove_leaved_candidates(voting_district, temp_candidates)
+        remove_leaved_candidates(voting_district, temp_candidates)
         sleep 4
       end
     end
@@ -345,7 +343,8 @@ class CrawleringService
   private
 
   def remove_leaved_candidates(voting_district, temp_candidates)
-    Candidate.where(voting_district: voting_district).each do |c1|
+    # Candidate.where(voting_district: voting_district).each do |c1|
+    Candidate.where(voting_district: voting_district).where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).each do |c1|
       leaved_candidate = true
       temp_candidates.each do |c2|
         if c1.party == c2[:party] && c1.name == c2[:name] && c1.birth_date == c2[:birth_date]
