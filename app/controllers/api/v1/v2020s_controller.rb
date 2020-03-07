@@ -19,7 +19,11 @@ module Api
       def voting_districts
         @liked_candidates = @current_user.liked_candidates.pluck('id')
 
-        @voting_districts = @district.present?? VotingDistrict.where(id: @district) : VotingDistrict.all
+        if params[:keyword].present?
+          @voting_districts = VotingDistrict.search_by_keyword(params[:keyword])
+        else
+          @voting_districts = @district.present?? VotingDistrict.where(id: @district) : VotingDistrict.all
+        end
         @voting_districts = @voting_districts.page(params[:page]).per(params[:per_page])
         @meta = get_page_info(@voting_districts).merge(meta_status)
       end
