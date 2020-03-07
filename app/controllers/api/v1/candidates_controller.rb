@@ -8,7 +8,7 @@ module Api
       before_action :set_meta
       before_action :set_district, only: [:index]
 
-      before_action :set_current_user, only: %i[show_comments create_comments index]
+      before_action :set_current_user, only: %i[show_comments create_comments index show]
       before_action :set_candidate, only: %i[show_comments create_comments show]
 
       # candidate list
@@ -22,7 +22,9 @@ module Api
         @meta = get_page_info(@candidates).merge(meta_status)
       end
 
-      def show; end
+      def show
+        @liked_candidates = @current_user.liked_candidates.pluck('id')
+      end
 
       def create_comments
         @current_user.comments.create(comment_params)
