@@ -24,6 +24,10 @@ module Api
         @meta = get_page_info(@voting_districts).merge(meta_status)
       end
 
+      def show
+        @voting_district = VotingDistrict.where(id: params[:id])
+      end
+
       private
 
       def set_current_user

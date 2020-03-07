@@ -48,6 +48,7 @@ Rails.application.routes.draw do
 
       get 'cities' => 'v2020s#cities'
       get 'voting_districts' => 'v2020s#voting_districts'
+      get 'voting_districts/:id' => 'v2020s#show'
 
     end
   end
