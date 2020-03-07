@@ -6,7 +6,7 @@ module Api
       include AuditLog
 
       before_action :set_meta
-      before_action :set_current_user, only: [:voting_districts]
+      before_action :set_current_user, only: [:voting_districts, :show]
       before_action :set_district, only: [:voting_districts]
 
       # city list
