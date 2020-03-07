@@ -25,6 +25,7 @@ module Api
       end
 
       def show
+        @liked_candidates = @current_user.liked_candidates.pluck('id')
         @voting_district = VotingDistrict.where(id: params[:id])
       end
 
