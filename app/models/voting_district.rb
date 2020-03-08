@@ -18,6 +18,6 @@ class VotingDistrict < Code
   belongs_to :city, class_name: 'City', :foreign_key => :parent_id
 
   scope :search_by_keyword, ->(keyword) {
-    VotingDistrict.joins(:districts).joins(:candidates).where("codes.name1 like :keyword or districts_codes.name1 like :keyword or candidates.name like :keyword", keyword: "%#{keyword}%").distinct
+    VotingDistrict.left_outer_joins(:districts).left_outer_joins(:candidates).where("codes.name1 like :keyword or districts_codes.name1 like :keyword or candidates.name like :keyword", keyword: "%#{keyword}%").distinct
   }
 end
