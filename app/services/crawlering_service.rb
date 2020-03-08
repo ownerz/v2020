@@ -313,7 +313,7 @@ class CrawleringService
               save_photo_info(c, 'e', education_pdf_url)
             end
 
-            @logger.info("크롤된된 후보자 : #{electoral_district} 선거구의 #{party} #{name} ")
+            @logger.info("크롤된 후보자 : #{electoral_district} 선거구의 #{party} #{name} ")
             temp_candidates.push({
               party: party,
               name: name,
@@ -357,7 +357,6 @@ class CrawleringService
         @logger.info("remove_leaved_candidates] #{c1.name} 삭제")
         c1.destroy 
       end
-      # c1.destroy if leaved_candidate == true
     end
 
     # return if TempCandidate.all.size < 1
