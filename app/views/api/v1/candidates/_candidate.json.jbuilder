@@ -26,5 +26,7 @@ if candidate.present?
 
   # 내가 좋아요 한 후보인지.
   # json.liked @current_user.liked_candidates.include?(candidate)
-  json.liked @liked_candidates.include?(candidate.id) if @liked_candidates.present?
+  
+  json.liked @liked_candidates.present?? @liked_candidates.include?(candidate.id) : false
+
 end
