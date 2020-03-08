@@ -6,7 +6,7 @@ module Api
       include AuditLog
 
       before_action :set_meta
-      before_action :set_current_user, only: %i[like]
+      before_action :set_current_user, only: %i[like_candidate liked_candidates]
 
       def create
         @current_user = User.new(user_params)
@@ -18,6 +18,11 @@ module Api
 
       def like_candidate
         @current_user.add_like_to(Candidate.find(like_params.dig('candidate_id')))
+      rescue => e
+        render_error :unprocessable_entity, e
+      end
+
+      def liked_candidates
       rescue => e
         render_error :unprocessable_entity, e
       end

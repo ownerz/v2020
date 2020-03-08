@@ -17,6 +17,7 @@ device-id: 1110115
 ### 
 # like candidate
 PUT {{server}}/api/v1/users/likes
+# PUT {{server}}/api/v1/candidates/likes
 Content-Type: application/json
 device-id: 1110115
 
@@ -25,6 +26,14 @@ device-id: 1110115
     "candidate_id": 19
   }
 }
+
+###
+# liked candidates
+GET {{server}}/api/v1/users/likes
+# GET {{server}}/api/v1/candidates/likes
+Content-Type: application/json
+device-id: 1110115
+
 
 ###############################################
 ### 

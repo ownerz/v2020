@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       resource :users do
         member do
           put 'likes' => 'users#like_candidate'
+          get 'likes' => 'users#liked_candidates'
         end
 
         # # # resource :comments
@@ -44,6 +45,11 @@ Rails.application.routes.draw do
         get ':id' => 'candidates#show'
         get ':id/comments' => 'candidates#show_comments'
         post ':id/comments' => 'candidates#create_comments'
+
+        # member do
+        #   put 'likes' => 'candidates#like_candidate'
+        #   get 'likes' => 'candidates#liked_candidates'
+        # end
       end
 
       get 'cities' => 'v2020s#cities'
