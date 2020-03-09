@@ -31,14 +31,14 @@ class Candidate < ApplicationRecord
            inverse_of: :context
 
   has_many :education_photos,
-           -> { where(photo_type: 'education') },
+           -> { where(photo_type: 'e') },
            class_name: 'Photo',
            as: :context,
            dependent: :destroy,
            inverse_of: :context
 
   has_many :criminal_photos,
-           -> { where(photo_type: 'criminal') },
+           -> { where(photo_type: 'c') },
            class_name: 'Photo',
            as: :context,
            dependent: :destroy,
