@@ -259,75 +259,80 @@ class CrawleringService
 
         temp_candidates = []
 
-        # p candidates
-        candidates.each do |candidate|
-          electoral_district = candidate.dig('선거구명').gsub(' ', '')
-          party = candidate.dig('소속정당명').gsub(' ', '')
-          name = candidate.dig('성명(한자)').gsub(' ', '')
-          birth_date = candidate.dig('생년월일(연령)').gsub(' ', '')
+        begin
+          # p candidates
+          candidates.each do |candidate|
+            electoral_district = candidate.dig('선거구명').gsub(' ', '')
+            party = candidate.dig('소속정당명').gsub(' ', '')
+            name = candidate.dig('성명(한자)').gsub(' ', '')
+            birth_date = candidate.dig('생년월일(연령)').gsub(' ', '')
 
-          c = Candidate.find_or_initialize_by(electoral_district: electoral_district,
-          # c = Candidate.find_or_create_by(electoral_district: electoral_district,
-                                          party: party,
-                                          name: name,
-                                          birth_date: birth_date
-                                          )
-          if c.new_record?
-            c.voting_district = voting_district
-            c.photo = "http://info.nec.go.kr#{candidate.dig('사진')}"
-            c.sex = candidate.dig('성별')
-            c.address = candidate.dig('주소')
-            c.job = candidate.dig('직업')
-            c.education = candidate.dig('학력')
-            c.career = candidate.dig('경력')
-            c.criminal_record = candidate.dig('전과기록유무(건수)')
-            c.reg_date = candidate.dig('등록일자')
-            c.crawl_id = crawl_id
-            c.candidate_no = File.basename(candidate.dig('사진'), '.*').gsub('thumbnail.', '')
-            c.wiki_page = get_namuwiki_page(c.name.split('(').first)
-            c.save!
+            c = Candidate.find_or_initialize_by(electoral_district: electoral_district,
+            # c = Candidate.find_or_create_by(electoral_district: electoral_district,
+                                            party: party,
+                                            name: name,
+                                            birth_date: birth_date
+                                            )
+            if c.new_record?
+              c.voting_district = voting_district
+              c.photo = "http://info.nec.go.kr#{candidate.dig('사진')}"
+              c.sex = candidate.dig('성별')
+              c.address = candidate.dig('주소')
+              c.job = candidate.dig('직업')
+              c.education = candidate.dig('학력')
+              c.career = candidate.dig('경력')
+              c.criminal_record = candidate.dig('전과기록유무(건수)')
+              c.reg_date = candidate.dig('등록일자')
+              c.crawl_id = crawl_id
+              c.candidate_no = File.basename(candidate.dig('사진'), '.*').gsub('thumbnail.', '')
+              c.wiki_page = get_namuwiki_page(c.name.split('(').first)
+              c.save!
 
-            @logger.info("#{electoral_district} 선거구의 #{party} #{name} 후보자 등록")
+              @logger.info("#{electoral_district} 선거구의 #{party} #{name} 후보자 등록")
 
-            # 전과 기록
-            unless c.criminal_record.include?("없음")
-              criminal_pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
-              if criminal_pdf_url.present?
-                # save_photo(c, 'c', criminal_pdf_url)
-                # jpg_path = PdfService.new.convert(upload_path)
-                # save_photo_info(c, 'criminal', criminal_pdf_url, upload_path)
+              # 전과 기록
+              unless c.criminal_record.include?("없음")
+                criminal_pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
+                if criminal_pdf_url.present?
+                  # save_photo(c, 'c', criminal_pdf_url)
+                  # jpg_path = PdfService.new.convert(upload_path)
+                  # save_photo_info(c, 'criminal', criminal_pdf_url, upload_path)
 
-                save_photo_info(c, 'c', criminal_pdf_url)
+                  save_photo_info(c, 'c', criminal_pdf_url)
+                end
+
+                sleep 1
               end
 
-              sleep 1
-            end
+              # 학력
+              education_pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
+              if education_pdf_url.present?
+                # upload_path = "tmp/e_#{c.candidate_no}.pdf"
+                # jpg_path = PdfService.new.convert(upload_path)
+                # save_photo_info(c, 'e', education_pdf_url, upload_path)
+                # save_photo(c, 'e', education_pdf_url)
+                save_photo_info(c, 'e', education_pdf_url)
+              end
 
-            # 학력
-            education_pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
-            if education_pdf_url.present?
-              # upload_path = "tmp/e_#{c.candidate_no}.pdf"
-              # jpg_path = PdfService.new.convert(upload_path)
-              # save_photo_info(c, 'e', education_pdf_url, upload_path)
-              # save_photo(c, 'e', education_pdf_url)
-              save_photo_info(c, 'e', education_pdf_url)
+              @logger.info("크롤된 후보자 : #{electoral_district} 선거구의 #{party} #{name} ")
+              temp_candidates.push({
+                party: party,
+                name: name,
+                birth_date: birth_date
+              })
+              # TempCandidate.create(electoral_district: electoral_district, 
+              #                     party: party,
+              #                     name: name)
             end
-
-            @logger.info("크롤된 후보자 : #{electoral_district} 선거구의 #{party} #{name} ")
-            temp_candidates.push({
-              party: party,
-              name: name,
-              birth_date: birth_date
-            })
-            # TempCandidate.create(electoral_district: electoral_district, 
-            #                     party: party,
-            #                     name: name)
           end
-        end
 
-        ## 
-        remove_leaved_candidates(voting_district, temp_candidates)
-        sleep 4
+          ## 
+          remove_leaved_candidates(voting_district, temp_candidates)
+          sleep 4
+
+        rescue => e
+          @logger.error("후보 등록 오류 : #{e.message}")
+        end
       end
     end
 
