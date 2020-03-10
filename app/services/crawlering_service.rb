@@ -327,7 +327,7 @@ class CrawleringService
           end
 
           ## 
-          remove_leaved_candidates(voting_district, temp_candidates)
+          # remove_leaved_candidates(voting_district, temp_candidates)
           sleep 4
 
         rescue => e
