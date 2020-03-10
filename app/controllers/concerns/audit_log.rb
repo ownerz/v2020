@@ -27,7 +27,8 @@ module AuditLog
   private
 
   def get_geoinfo
-    Geocoder.search(request.remote_ip).to_json
+    # Geocoder.search(request.remote_ip).to_json
+    geoinfo = Geocoder.search(request.remote_ip).first
     # geoinfo = Geocoder.search('112.216.231.90').first
     {
       country: geoinfo&.data['country'],
