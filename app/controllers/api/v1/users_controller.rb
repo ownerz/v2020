@@ -23,6 +23,7 @@ module Api
       end
 
       def liked_candidates
+        @liked_candidates = @current_user.liked_candidates.pluck('id')
       rescue => e
         render_error :unprocessable_entity, e
       end
