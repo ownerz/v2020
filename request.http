@@ -1,11 +1,14 @@
 # @server = http://localhost:3000
+# @device-id= 1110115
+
 @server = http://13.209.167.197
+@device-id= 9cb1bac632cd3bfd
 
 ###
 # user create 
 POST {{server}}/api/v1/users
 Content-Type: application/json
-device-id: 1110115
+device-id: {{device-id}}
 
 {
   "data": {
@@ -19,7 +22,7 @@ device-id: 1110115
 PUT {{server}}/api/v1/users/likes
 # PUT {{server}}/api/v1/candidates/likes
 Content-Type: application/json
-device-id: 1110115
+device-id: {{device-id}}
 
 {
   "data": {
@@ -32,7 +35,7 @@ device-id: 1110115
 GET {{server}}/api/v1/users/likes
 # GET {{server}}/api/v1/candidates/likes
 Content-Type: application/json
-device-id: 9cb1bac632cd3bfd
+device-id: {{device-id}}
 
 
 ###############################################
@@ -40,7 +43,7 @@ device-id: 9cb1bac632cd3bfd
 # create comment 
 POST {{server}}/api/v1/candidates/18/comments
 Content-Type: application/json
-device-id: 9cb1bac632cd3bfd
+device-id: {{device-id}}
 
 {
   "data": {
@@ -52,14 +55,14 @@ device-id: 9cb1bac632cd3bfd
 ### 후보자 comment list
 GET {{server}}/api/v1/candidates/18/comments
 Content-Type: application/json
-device-id: 1110115
+device-id: {{device-id}}
 
 
 ### 
 # update comment 
 PUT {{server}}/api/v1/comments/2
 Content-Type: application/json
-device-id: 1110115
+device-id: {{device-id}}
 
 {
   "data": {
@@ -71,14 +74,14 @@ device-id: 1110115
 # delete comment 
 DELETE {{server}}/api/v1/comments/3
 Content-Type: application/json
-device-id: 1110115
+device-id: {{device-id}}
 
 
 ### 
 # my comments
 GET {{server}}/api/v1/comments
 Content-Type: application/json
-device-id: 1110115
+device-id: {{device-id}}
 
 
 ###############################################
@@ -87,14 +90,14 @@ device-id: 1110115
 # 도시 
 GET {{server}}/api/v1/cities?page=1&per=10
 Content-Type: application/json
-device-id: 1110115
+device-id: {{device-id}}
 
 ###
 # 선거구 
-# GET {{server}}/api/v1/voting_districts?page=1&per=10&x=126.973457&y=37.555465
-GET {{server}}/api/v1/voting_districts?page=1&per=10
+GET {{server}}/api/v1/voting_districts?page=1&per=10&x=126.973457&y=37.555465
+# GET {{server}}/api/v1/voting_districts?page=1&per=10
 Content-Type: application/json
-device-id: 1110115
+device-id: {{device-id}}
 
 ###
 # 후보 list
@@ -102,7 +105,7 @@ GET {{server}}/api/v1/candidates?page=1&per=10
 # GET {{server}}/api/v1/candidates?page=1&per=10&x=129.014032&y=35.412894
 # GET {{server}}/api/v1/candidates?page=1&per=10&x=126.973457&y=37.555465
 Content-Type: application/json
-device-id: 9cb1bac632cd3bfd
+device-id: {{device-id}}
 
 
 ###
