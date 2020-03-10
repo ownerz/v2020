@@ -10,6 +10,8 @@ module AuditLog
 
   def audit_log
     begin
+      Rails.logger.info(":::: UserAudit device-id : #{request.headers[:HTTP_DEVICE_ID]} ::::")
+
       geoinfo = get_geoinfo
       ret = UserAudit.create!( device_id: request.headers[:HTTP_DEVICE_ID],
                         request_url: request.url,
