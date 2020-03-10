@@ -11,6 +11,10 @@
 #  deleted_at  :datetime
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  country     :string(255)      default(""), not null
+#  loc         :string(255)      default(""), not null
+#  postal      :string(255)      default(""), not null
+#  city        :string(255)      default(""), not null
 #
 
 class UserAudit < ApplicationRecord
