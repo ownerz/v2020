@@ -4,6 +4,14 @@
 # @server = http://13.209.167.197
 # @device-id= 9cb1bac632cd3bfd
 
+
+
+###
+# user show 
+GET {{server}}/api/v1/sessions
+Content-Type: application/json
+device-id: {{device-id}}
+
 ###
 # user create 
 POST {{server}}/api/v1/users
@@ -94,7 +102,8 @@ device-id: {{device-id}}
 
 ###
 # 선거구 
-GET {{server}}/api/v1/voting_districts?page=1&per=10&x=126.973457&y=37.555465
+# GET {{server}}/api/v1/voting_districts?page=1&per=10&x=126.973457&y=37.555465
+GET {{server}}/api/v1/voting_districts?page=1&per=10&x=126.9305023&y=37.4030928
 # GET {{server}}/api/v1/voting_districts?page=1&per=10
 Content-Type: application/json
 device-id: {{device-id}}

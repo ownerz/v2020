@@ -34,6 +34,8 @@ Rails.application.routes.draw do
         # end
       end
 
+      get 'sessions' => 'users#check_session' # my comments
+
       # resource :comments, only: [:destroy, :show]
       delete 'comments/:id' => 'comments#destroy'
       get 'comments/:id' => 'comments#show'

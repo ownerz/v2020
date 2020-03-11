@@ -12,18 +12,33 @@ class ApplicationController < ActionController::API
     # 제주도 특별하다.
     # "region_1depth_name"=>"제주특별자치도", "region_2depth_name"=>"제주시", "region_3depth_name"=>"애월읍 고성리"
     # 
-
     region_1depth_name = JSON.parse(location_string).dig('documents')[0]&.dig('address')&.dig('region_1depth_name')
     region_2depth_name = JSON.parse(location_string).dig('documents')[0]&.dig('address')&.dig('region_2depth_name')
     region_3depth_name = JSON.parse(location_string).dig('documents')[0]&.dig('address')&.dig('region_3depth_name')
     return unless region_1depth_name.present? || region_2depth_name.present?
 
-    @district = District.where('name1 like ?', "#{region_3depth_name.split(' ').first}%")&.first&.voting_district
-    @district = VotingDistrict.where('name1 like ?', "#{region_2depth_name}%") unless @district.present?
-    @district = VotingDistrict.where('name2 like ?', "#{region_2depth_name}%") unless @district.present?
-    @district = VotingDistrict.where('name1 like ?', "#{region_1depth_name}%") unless @district.present?
-    @district = VotingDistrict.where('name2 like ?', "#{region_1depth_name}%") unless @district.present?
-    @district = @district.where(city: City.where(name1: region_1depth_name)).first if @district.present?
+    voting_districts = VotingDistrict.where('name1 like ?', "#{region_2depth_name.split(' ').first}%") unless voting_districts.present?
+    voting_districts = VotingDistrict.where('name2 like ?', "#{region_2depth_name.split(' ').first}%") unless voting_districts.present?
+    voting_districts = VotingDistrict.where('name1 like ?', "#{region_1depth_name.split(' ').first}%") unless voting_districts.present?
+    voting_districts = VotingDistrict.where('name2 like ?', "#{region_1depth_name.split(' ').first}%") unless voting_districts.present?
+
+    ########################
+    search_name = region_3depth_name.split(' ').first&.gsub(' ', '')
+    if search_name[-1].eql?('동')
+      search_name = search_name[0...-1]
+    end
+
+    voting_districts.each do |voting_district|
+      if voting_district.districts.where('name1 like ?', "#{search_name}%").present?
+        @district = voting_district 
+        break
+      end
+    end
+    @district = voting_districts.first unless @district.present?
+    ########################
+
+    # @district = District.where('name1 like ?', "#{region_3depth_name.split(' ').first}%")&.first&.voting_district
+    # @district = @district.where(city: City.where(name1: region_1depth_name)).first if @district.present?
 
     Rails.logger.info("get_district) district: #{@district}")
   end
