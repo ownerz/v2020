@@ -9,9 +9,17 @@ module Api
       before_action :set_current_user, only: %i[like_candidate liked_candidates]
 
       def create
-        @current_user = User.new(user_params)
-        @current_user.save!
+        # @current_user = User.find_by(device_id: request.headers[:HTTP_DEVICE_ID])
+        # unless @current_user.present?
+          @current_user = User.new(user_params)
+          @current_user.save!
+        # end
+      rescue => e
+        render_error :unprocessable_entity, e
+      end
 
+      def check_session
+        @current_user = User.find_by!(device_id: request.headers['device-id'])
       rescue => e
         render_error :unprocessable_entity, e
       end
