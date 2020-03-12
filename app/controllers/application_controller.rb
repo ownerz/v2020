@@ -11,7 +11,7 @@ class ApplicationController < ActionController::API
     # "region_1depth_name"=>"세종특별자치시", "region_2depth_name"=>"세종시", "region_3depth_name"=>"연서면 와촌리"
     # 제주도 특별하다.
     # "region_1depth_name"=>"제주특별자치도", "region_2depth_name"=>"제주시", "region_3depth_name"=>"애월읍 고성리"
-    # 
+    #
     region_1depth_name = JSON.parse(location_string).dig('documents')[0]&.dig('address')&.dig('region_1depth_name')
     region_2depth_name = JSON.parse(location_string).dig('documents')[0]&.dig('address')&.dig('region_2depth_name')
     region_3depth_name = JSON.parse(location_string).dig('documents')[0]&.dig('address')&.dig('region_3depth_name')
@@ -30,7 +30,7 @@ class ApplicationController < ActionController::API
 
     voting_districts.each do |voting_district|
       if voting_district.districts.where('name1 like ?', "#{search_name}%").present?
-        @district = voting_district 
+        @district = voting_district
         break
       end
     end

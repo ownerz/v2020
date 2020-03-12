@@ -7,7 +7,7 @@ module Api
 
       before_action :set_meta
       before_action :set_current_user, only: [:voting_districts, :show]
-      before_action :set_district, only: [:voting_districts]
+      before_action :set_district, only: [:voting_districts, :district_by_location]
 
       # city list
       def cities
@@ -32,6 +32,13 @@ module Api
         @liked_candidates = @current_user.liked_candidates.pluck('id')
         @voting_district = VotingDistrict.where(id: params[:id])
       end
+
+      # 위치 정보로 지역 아이디 받아오기
+      def district_by_location
+        @district.present?? VotingDistrict.where(id: @district)&.first : VotingDistrict.find(22)
+        render json: { district: @district, meta: @meta }, adapter: :json
+      end
+
 
       private
 
