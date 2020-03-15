@@ -1,107 +1,54 @@
-@server = http://localhost:3000
-# @server = http://13.209.167.197
+###
+# 선거구
+GET http://13.209.167.197//api/v1/voting_districts?page=1&per=10
+Content-Type: application/json
+device-id: 851aea3865656f8c
 
 ###
-# user create 
-POST {{server}}/api/v1/users
+# 선거구
+GET http://13.209.167.197//api/v1/voting_districts?page=1&per=10&keyword=민정
 Content-Type: application/json
-device-id: 1110115
-
-{
-  "data": {
-    "age": 0,
-    "sex": 0
-  }
-}
-
-### 
-# like candidate
-PUT {{server}}/api/v1/users/likes
-Content-Type: application/json
-device-id: 1110115
-
-{
-  "data": {
-    "candidate_id": 19
-  }
-}
-
-###############################################
-### 
-# create comment 
-POST {{server}}/api/v1/candidates/18/comments
-Content-Type: application/json
-device-id: 1110115
-
-{
-  "data": {
-    "body": "bbbbbbccc"
-  }
-}
-
-
-### 후보자 comment list
-GET {{server}}/api/v1/candidates/18/comments
-Content-Type: application/json
-device-id: 1110115
-
-
-### 
-# update comment 
-PUT {{server}}/api/v1/comments/2
-Content-Type: application/json
-device-id: 1110115
-
-{
-  "data": {
-    "body": "bbbbbbccc"
-  }
-}
-
-### 
-# delete comment 
-DELETE {{server}}/api/v1/comments/3
-Content-Type: application/json
-device-id: 1110115
-
-
-### 
-# my comments
-GET {{server}}/api/v1/comments
-Content-Type: application/json
-device-id: 1110115
-
-
-###############################################
+device-id: 851aea3865656f8c
 
 ###
-# 도시 
-GET {{server}}/api/v1/cities?page=1&per=10
+# 선거구
+GET http://13.209.167.197//api/v1/voting_districts?x=127.2893717&y=37.3942133
 Content-Type: application/json
-device-id: 1110115
+device-id: 851aea3865656f8c
 
 ###
-# 선거구 
-# GET {{server}}/api/v1/voting_districts?page=1&per=10&x=126.973457&y=37.555465
-GET {{server}}/api/v1/voting_districts?page=1&per=10
+# 선거구
+GET http://13.209.167.197//api/v1/voting_districts?x=126.9305023&y=37.4030928
 Content-Type: application/json
-device-id: 1110115
+device-id: 851aea3865656f8c
 
 ###
-# 후보 list
-GET {{server}}/api/v1/candidates?page=1&per=10
-# GET {{server}}/api/v1/candidates?page=1&per=10&x=129.014032&y=35.412894
-# GET {{server}}/api/v1/candidates?page=1&per=10&x=126.973457&y=37.555465
+# 선거구
+GET http://13.209.167.197/api/v1/district_by_location?x=126.9305023&y=37.4030928
 Content-Type: application/json
-device-id: 1110115
+device-id: 851aea3865656f8c
+
+###
+# 선거구
+GET http://13.209.167.197//api/v1/candidates?page=1&per=10
+Content-Type: application/json
+device-id: 851aea3865656f8c
+
+###
+# 선거구
+GET http://13.209.167.197//api/v1/voting_districts/148
+Content-Type: application/json
+device-id: 851aea3865656f8c
 
 
 ###
-# kakao api
-GET https://dapi.kakao.com/v2/local/geo/coord2address.json?x=126.973457&y=37.555465
-Authorization: KakaoAK aaebc65e6dd5021b19da8251a4b2adc9
+GET https://openapi.naver.com/v1/search/news.json?query=총선&start=2&display=20
+X-Naver-Client-Id: cS1YcI9G0x81SoULqK9X
+X-Naver-Client-Secret: 3nQp_BdUL7
 
 
-
-
-
+###
+# 게시판
+GET http://13.209.167.197/api/v1/boards
+Content-Type: application/json
+device-id: 851aea3865656f8c

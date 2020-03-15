@@ -59,6 +59,11 @@ Rails.application.routes.draw do
       get 'voting_districts/:id' => 'v2020s#show'
       get 'district_by_location' => 'v2020s#district_by_location'
 
+      # resource :boards, only: [:index, :create, :destroy]
+      get 'boards' => 'boards#index'
+      post 'boards' => 'boards#create'
+      delete 'boards' => 'boards#delete'
+
     end
   end
 end
