@@ -10,6 +10,7 @@ module Api
 
       def index
         @boards = Board.order(board_type: :asc).order(seq: :asc).order(id: :desc)
+        @boards = @boards.where(board_type: 'notice').limit(1) if params[:notice].eql?('y')
       end
 
       def create
