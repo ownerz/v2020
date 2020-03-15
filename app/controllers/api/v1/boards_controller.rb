@@ -21,6 +21,10 @@ module Api
       end
 
       def destroy
+        board = Board.find(params[:id])
+        board.destroy!
+      rescue => e
+        render_error :unprocessable_entity, e
       end
 
       private
