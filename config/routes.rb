@@ -62,7 +62,7 @@ Rails.application.routes.draw do
       # resource :boards, only: [:index, :create, :destroy]
       get 'boards' => 'boards#index'
       post 'boards' => 'boards#create'
-      delete 'boards' => 'boards#delete'
+      delete 'boards' => 'boards#destroy'
 
     end
   end
