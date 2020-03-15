@@ -17,6 +17,7 @@ module Api
 
       # voting district list
       def voting_districts
+        @option = params[:option]
         @liked_candidates = @current_user.liked_candidates.pluck('id')
 
         if params[:keyword].present?
