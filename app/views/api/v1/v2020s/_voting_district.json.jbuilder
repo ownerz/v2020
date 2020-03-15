@@ -14,7 +14,7 @@ if voting_district.present?
 
   # 후보자
   # json.candidates voting_district.candidates, partial: 'candidate', as: :candidate
-  if !defined?(candidate)
+  if defined?(only_district)
     json.candidates voting_district.candidates, partial: '/api/v1/candidates/candidate', as: :candidate
   end
 end
