@@ -7,5 +7,6 @@ if board.present?
   json.body board.body
   json.link board.link
   json.seq board.seq
+  json.image board.image
   json.created_at board.created_at
 end
