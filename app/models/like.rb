@@ -18,6 +18,6 @@ class Like < ApplicationRecord
 
   validates :user_id, :uniqueness => {
     :scope => [:context_id, :context_type]
-}
+  }
 
 end

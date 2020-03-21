@@ -46,6 +46,9 @@ class Candidate < ApplicationRecord
 
   has_many :comments, as: :commentable, dependent: :destroy
 
+  has_many :likes, as: :context, dependent: :destroy, inverse_of: :context
+  has_many :followers, through: :likes, source: :user
+
   belongs_to :voting_district, class_name: 'VotingDistrict', :foreign_key => :code_id
 end
 
