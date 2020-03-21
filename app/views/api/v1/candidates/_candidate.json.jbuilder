@@ -24,6 +24,9 @@ if candidate.present?
   json.reg_date candidate.reg_date
   json.wiki_page candidate.wiki_page
 
+  # 후보자를 bookmark 한 user 수
+  json.followers candidate.followers.size
+
   # 내가 좋아요 한 후보인지.
   # json.liked @current_user.liked_candidates.include?(candidate)
   
