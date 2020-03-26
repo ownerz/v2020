@@ -10,9 +10,9 @@ class CrawleringJob < ApplicationJob
   end
 
   def perform(*args)
-    Sidekiq::Logging.logger.info("cralering job started")
-    crawl_id = CrawleringService.new.crawlering
-    Sidekiq::Logging.logger.info("cralering job finised. crawl_id = #{crawl_id}")
+    # Sidekiq::Logging.logger.info("cralering job started")
+    # crawl_id = CrawleringService.new.crawlering
+    # Sidekiq::Logging.logger.info("cralering job finised. crawl_id = #{crawl_id}")
   end
 
 end
