@@ -373,10 +373,11 @@ class CrawleringService
 
   def save_photo_info(candidate, photo_type, pdf_url)
     begin
-      s3_path = "tmp/#{photo_type}_#{candidate.candidate_no}.pdf"
+      # s3_path = "tmp/#{photo_type}_#{candidate.candidate_no}.pdf"
 
-      FileService.instance.direct_upload(pdf_url, s3_path)
-      candidate.photos.create(photo_type: photo_type, url: "#{CACHE_BASE_URL}/#{s3_path}") 
+      # FileService.instance.direct_upload(pdf_url, s3_path)
+      # candidate.photos.create(photo_type: photo_type, url: "#{CACHE_BASE_URL}/#{s3_path}") 
+      candidate.photos.create(photo_type: photo_type, url: pdf_url) 
     rescue => exception
       @logger.error("upload s3 error : #{pdf_url}")
       candidate.photos.create(photo_type: photo_type, url: pdf_url) 
