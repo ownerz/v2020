@@ -1,9 +1,12 @@
-@server = http://localhost:3000
-@device-id= 1110115
+# @server = http://localhost:3000
+# @device-id= 1110115
 
 # @server = http://13.209.167.197
 # @device-id= 9cb1bac632cd3bfd
 
+# @server = http://api.v2020.ownerz.io
+@server = http://ssm-imgproxy-qav1.ap-northeast-2.elasticbeanstalk.com
+@device-id= 9cb1bac632cd3bfd
 
 
 ###

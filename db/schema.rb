@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_16_025302) do
+ActiveRecord::Schema.define(version: 2020_03_26_115304) do
 
   create_table "boards", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.integer "board_type"
@@ -44,6 +44,13 @@ ActiveRecord::Schema.define(version: 2020_03_16_025302) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "crawl_id", null: false
     t.string "candidate_no", default: "", null: false
+    t.string "number", default: ""
+    t.string "property", default: ""
+    t.string "military", default: ""
+    t.string "candidate_number", default: ""
+    t.string "tax_payment", default: ""
+    t.string "latest_arrears", default: ""
+    t.string "arrears", default: ""
     t.index ["code_id"], name: "index_candidates_on_code_id"
     t.index ["crawl_id"], name: "index_candidates_on_crawl_id"
   end

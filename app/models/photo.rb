@@ -15,8 +15,13 @@
 class Photo < ApplicationRecord
   belongs_to :context, polymorphic: true
 
-  # c : criminal (범죄경력)
-  # e : education (학력)
-  enum photo_type: [:c, :e]
+  # EDUCATION_RECORD_REPORT_ID = 1 # 학력
+  # PROPERTY_RECORD_REPORT_ID = 2 # 재산
+  # TAX_RECORD_REPORT_ID = 3 # 납세
+  # MILITARY_RECORD_REPORT_ID = 4 # 병역
+  # CRIMINAL_RECORD_REPORT_ID = 5 # 전과
+  # ELECTION_RECORD_REPORT_ID = 8 # 공직선거 경력
+  enum photo_type: [:e, :p, :t, :m, :c, :el]
+
 
 end
