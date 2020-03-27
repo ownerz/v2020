@@ -23,5 +23,4 @@ class Photo < ApplicationRecord
   # ELECTION_RECORD_REPORT_ID = 8 # 공직선거 경력
   enum photo_type: [:e, :p, :t, :m, :c, :el]
 
-
 end

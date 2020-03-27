@@ -382,7 +382,8 @@ class CrawleringService
     # ## Candidate 에는 있고, TempCandidate 는 없는 후보자는 삭제 한다. 
     remove_leaved_candidates
     @logger.info("crawlering finished!")
-    return crawl_id
+    # return crawl_id
+    return ''
   rescue => e
     @logger.error("Error : #{e.message}")
   end

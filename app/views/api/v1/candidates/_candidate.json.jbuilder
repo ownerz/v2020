@@ -16,8 +16,12 @@ if candidate.present?
   json.career candidate.career
   json.criminal_record candidate.criminal_record
 
-  json.criminal_photos candidate.criminal_photos, partial: '/api/v1/candidates/photo', as: :photo
   json.education_photos candidate.education_photos, partial: '/api/v1/candidates/photo', as: :photo
+  json.property_photos candidate.property_photos, partial: '/api/v1/candidates/photo', as: :photo
+  json.tax_photos candidate.tax_photos, partial: '/api/v1/candidates/photo', as: :photo
+  json.military_photos candidate.military_photos, partial: '/api/v1/candidates/photo', as: :photo
+  json.criminal_photos candidate.criminal_photos, partial: '/api/v1/candidates/photo', as: :photo
+  json.election_photos candidate.election_photos, partial: '/api/v1/candidates/photo', as: :photo
 
   # json.criminal_photos candidate.criminal_photos
   # json.education_photos candidate.education_photos

@@ -20,7 +20,6 @@
 #  deleted_at         :datetime
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  crawl_id           :string(255)      not null
 #  candidate_no       :string(255)      default(""), not null
 #  number             :string(255)      default("")
 #  property           :string(255)      default("")
