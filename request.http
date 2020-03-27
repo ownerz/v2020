@@ -121,7 +121,7 @@ device-id: {{device-id}}
 
 ###
 # 후보 
-GET {{server}}/api/v1/candidates/18
+GET {{server}}/api/v1/candidates/19831
 Content-Type: application/json
 device-id: {{device-id}}
 
