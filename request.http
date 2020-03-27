@@ -119,6 +119,12 @@ GET {{server}}/api/v1/candidates?page=1&per=10
 Content-Type: application/json
 device-id: {{device-id}}
 
+###
+# 후보 
+GET {{server}}/api/v1/candidates/18
+Content-Type: application/json
+device-id: {{device-id}}
+
 
 ###
 # kakao api

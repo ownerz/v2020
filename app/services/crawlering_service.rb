@@ -392,7 +392,7 @@ class CrawleringService
 
   def remove_leaved_candidates(voting_district, temp_candidates)
     # Candidate.where('updated_at >= ?', 3.days.ago).destroy_all
-    Candidate.where('updated_at >= ?', 3.days.ago).each do |candidate|
+    Candidate.where('updated_at <= ?', 3.days.ago).each do |candidate|
       @logger.info("remove_leaved_candidates] #{candidate.name} 삭제")
     end
   end
