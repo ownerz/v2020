@@ -361,7 +361,7 @@ class CrawleringService
 
           ## 
           # remove_leaved_candidates(voting_district, temp_candidates)
-          sleep 4
+          sleep 5
 
         rescue => e
           @logger.error("후보 등록 오류 : #{e.message}")
