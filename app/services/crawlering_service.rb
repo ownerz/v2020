@@ -303,46 +303,56 @@ class CrawleringService
               @logger.info("#{electoral_district} 선거구의 #{party} #{name} 후보자 등록")
 
               # 학력
-              pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
-              if pdf_url.present?
-                # upload_path = "tmp/e_#{c.candidate_no}.pdf"
-                # jpg_path = PdfService.new.convert(upload_path)
-                # save_photo_info(c, 'e', education_pdf_url, upload_path)
-                # save_photo(c, 'e', education_pdf_url)
-
-                save_photo_info(c, 'e', pdf_url)
-              end
-
-              # 재산
-              pdf_url = candidate_detail_info(PROPERTY_RECORD_REPORT_ID, c.candidate_no)
-              save_photo_info(c, 'p', pdf_url) if pdf_url.present?
-
-              # 납세
-              pdf_url = candidate_detail_info(TAX_RECORD_REPORT_ID, c.candidate_no)
-              save_photo_info(c, 't', pdf_url) if pdf_url.present?
-
-              # 병역
-              pdf_url = candidate_detail_info(MILITARY_RECORD_REPORT_ID, c.candidate_no)
-              save_photo_info(c, 'm', pdf_url) if pdf_url.present?
-
-              # 전과 기록
-              unless c.criminal_record.include?("없음")
-                pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
-                if pdf_url.present?
-
-                  # save_photo(c, 'c', criminal_pdf_url)
-                  # jpg_path = PdfService.new.convert(upload_path)
-                  # save_photo_info(c, 'c', criminal_pdf_url, upload_path)
-
-                  save_photo_info(c, 'c', pdf_url)
-                end
-
+              unless c.education_photos.present?
+                pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
+                save_photo_info(c, 'e', pdf_url) if pdf_url.present?
                 sleep 1
               end
 
+              # 재산
+              unless c.property_photos.present?
+                pdf_url = candidate_detail_info(PROPERTY_RECORD_REPORT_ID, c.candidate_no)
+                save_photo_info(c, 'p', pdf_url) if pdf_url.present?
+                sleep 1
+              end
+
+              # 납세
+              unless c.tax_photos.present?
+                pdf_url = candidate_detail_info(TAX_RECORD_REPORT_ID, c.candidate_no)
+                save_photo_info(c, 't', pdf_url) if pdf_url.present?
+                sleep 1
+              end
+
+              # 병역
+              unless c.military_photos.present?
+                pdf_url = candidate_detail_info(MILITARY_RECORD_REPORT_ID, c.candidate_no)
+                save_photo_info(c, 'm', pdf_url) if pdf_url.present?
+                sleep 1
+              end
+
+              # 전과 기록
+              unless c.criminal_photos.present?
+                unless c.criminal_record.include?("없음")
+                  pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
+                  if pdf_url.present?
+
+                    # save_photo(c, 'c', criminal_pdf_url)
+                    # jpg_path = PdfService.new.convert(upload_path)
+                    # save_photo_info(c, 'c', criminal_pdf_url, upload_path)
+
+                    save_photo_info(c, 'c', pdf_url)
+                  end
+
+                  sleep 1
+                end
+              end
+
               # 공직선거 경력
-              pdf_url = candidate_detail_info(ELECTION_RECORD_REPORT_ID, c.candidate_no)
-              save_photo_info(c, 'el', pdf_url) if pdf_url.present?
+              unless c.election_photos.present?
+                pdf_url = candidate_detail_info(ELECTION_RECORD_REPORT_ID, c.candidate_no)
+                save_photo_info(c, 'el', pdf_url) if pdf_url.present?
+                sleep 1
+              end
 
               @logger.info("크롤된 후보자 : #{electoral_district} 선거구의 #{party} #{name} ")
               # temp_candidates.push({
@@ -361,7 +371,7 @@ class CrawleringService
 
           ## 
           # remove_leaved_candidates(voting_district, temp_candidates)
-          sleep 5
+          sleep 7
 
         rescue => e
           @logger.error("후보 등록 오류 : #{e.message}")

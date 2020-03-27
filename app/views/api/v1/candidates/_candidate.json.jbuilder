@@ -24,6 +24,14 @@ if candidate.present?
   json.reg_date candidate.reg_date
   json.wiki_page candidate.wiki_page
 
+  json.number candidate.number
+  json.property candidate.property
+  json.military candidate.military
+  json.candidate_number candidate.candidate_number
+  json.tax_payment candidate.tax_payment
+  json.latest_arrears candidate.latest_arrears
+  json.arrears candidate.arrears
+
   # 후보자를 bookmark 한 user 수
   json.followers candidate.followers.size
 
