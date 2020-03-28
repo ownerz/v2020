@@ -44,7 +44,7 @@ class Candidate < ApplicationRecord
            inverse_of: :context
 
   has_many :property_photos,
-           -> { where(photo_type: 'pp') },
+           -> { where(photo_type: 'p') },
            class_name: 'Photo',
            as: :context,
            dependent: :destroy,
