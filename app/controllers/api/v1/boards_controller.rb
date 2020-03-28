@@ -9,8 +9,12 @@ module Api
       # before_action :set_current_user
 
       def index
-        @boards = Board.order(board_type: :asc).order(seq: :asc).order(id: :desc)
+        @boards = Board.where(board_type: [:notice, :normal]).order(board_type: :asc).order(seq: :asc).order(id: :desc)
         @boards = @boards.where(board_type: 'notice').limit(1) if params[:notice].eql?('y')
+      end
+
+      def heads
+        @boards = Board.where(board_type: [:head]).order(seq: :asc).order(id: :desc)
       end
 
       def create

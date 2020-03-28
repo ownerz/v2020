@@ -17,5 +17,5 @@
 class Board < ApplicationRecord
   acts_as_paranoid
 
-  enum board_type: [:notice, :normal]
+  enum board_type: [:notice, :normal, :head]
 end

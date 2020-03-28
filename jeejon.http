@@ -62,6 +62,12 @@ device-id: 851aea3865656f8c
 
 ###
 # 게시판
+GET http://localhost:3000/api/v1/heads
+Content-Type: application/json
+device-id: 851aea3865656f8c
+
+###
+# 게시판
 GET http://localhost:3000/api/v1/boards?notice=y
 Content-Type: application/json
 device-id: 851aea3865656f8c
@@ -108,9 +114,89 @@ device-id: 851aea3865656f8c
 {
   "data" : {
     "board_type":0,
-    "title":"v2020은 총선 정보 제공 앱입니다.",
-    "body":"안녕하세요.\n\n 2020년 대한민국 선거정보를 제공하는 앱입니다.\n\n지역별 후보자를 확인할 수 있고 해당 후보자의 약력 및 위키정보, 학력정보, 범죄기록 정보를 조회할 수 있습니다.\n\n\n설명\n\n\n[후보자 검색  및 상세정보 조회]\n\n관심있는 후보자가 있으세요? \n\n후보자를 검색하여 후보자의 약력 및 위키정보, 학력정보, 범죄기록 정보 등을 조회하세요.\n\n\n[위치기반 지역별 후보자 확인 기능] \n\n내 위치 또는 지역 검색을 통해 해당 지역구의 전체 후보자를 한눈에 확인할 수 있습니다.\n\n\n[관심있는 후보자 북마크 기능] \n\n관심있는 후보자가 있으세요? \n\n북마크 기능을 통해 해당 후보자에 대한 변경 정보를 실시간 확인하세요.",
+    "title":"총선 정보 제공 앱입니다.",
+    "body":"안녕하세요.\n 2020년 대한민국 선거정보를 제공하는 앱입니다.\n지역별 후보자를 확인할 수 있고 해당 후보자의 약력 및 위키정보, 학력정보, 범죄기록 정보를 조회할 수 있습니다.\n\n설명\n\n[후보자 검색  및 상세정보 조회]\n관심있는 후보자가 있으세요? \n후보자를 검색하여 후보자의 약력 및 위키정보, 학력정보, 범죄기록 정보 등을 조회하세요.\n\n[위치기반 지역별 후보자 확인 기능] \n내 위치 또는 지역 검색을 통해 해당 지역구의 전체 후보자를 한눈에 확인할 수 있습니다.\n\n[관심있는 후보자 북마크 기능] \n관심있는 후보자가 있으세요? \n북마크 기능을 통해 해당 후보자에 대한 변경 정보를 실시간 확인하세요.",
     "link":"",
+    "seq":0
+  }
+}
+
+###
+# 게시판
+POST http://13.209.167.197/api/v1/boards
+Content-Type: application/json
+device-id: 851aea3865656f8c
+
+{
+  "data" : {
+    "board_type":0,
+    "title":"IOS 사용자 업데이트 공지",
+    "body":"안녕하세요.\n정식 후보자를 위한 추가 정보 제공 화면과 안정성이 업데이트 되었습니다. \nIOS 사용자 분들은 최신 앱 버전으로 업데이트 바랍니다. \n감사합니다. ",
+    "link":"",
+    "seq":-2
+  }
+}
+
+###
+# 게시판
+POST http://13.209.167.197/api/v1/boards
+Content-Type: application/json
+device-id: 851aea3865656f8c
+
+{
+  "data" : {
+    "board_type":1,
+    "title":"코로나19 확진자 투표할 수 있을까?",
+    "body":"",
+    "link":"https://www.nec.go.kr/portalVt/bbs/view/B0000424/40573.do?menuNo=200192&searchOption5=Y&searchWrd=&searchCnd=&viewType=T&pageIndex=1",
+    "seq":0
+  }
+}
+
+###
+# 게시판
+POST http://13.209.167.197/api/v1/boards
+Content-Type: application/json
+device-id: 851aea3865656f8c
+
+{
+  "data" : {
+    "board_type":1,
+    "title":"준연동형비례대표제, 그게 뭔가요?",
+    "body":"",
+    "link":"https://www.nec.go.kr/portalVt/bbs/view/B0000424/40265.do?menuNo=200192&searchOption5=Y&searchWrd=&searchCnd=&viewType=T&pageIndex=1",
+    "seq":0
+  }
+}
+
+###
+# 게시판
+POST http://13.209.167.197/api/v1/boards
+Content-Type: application/json
+device-id: 851aea3865656f8c
+
+{
+  "data" : {
+    "board_type":1,
+    "title":"두근두근 첫선거, 이것이 알고싶다-학생편",
+    "body":"",
+    "link":"https://www.nec.go.kr/portalVt/bbs/view/B0000424/40095.do?menuNo=200192&searchOption5=Y&searchWrd=&searchCnd=&viewType=T&pageIndex=1",
+    "seq":0
+  }
+}
+
+###
+# 게시판
+POST http://localhost:3000/api/v1/boards
+Content-Type: application/json
+device-id: 851aea3865656f8c
+
+{
+  "data" : {
+    "board_type":2,
+    "title":"두근두근 첫선거, 이것이 알고싶다-학생편",
+    "body":"",
+    "link":"https://www.nec.go.kr/portalVt/bbs/view/B0000424/40095.do?menuNo=200192&searchOption5=Y&searchWrd=&searchCnd=&viewType=T&pageIndex=1",
     "seq":0
   }
 }
