@@ -20,8 +20,14 @@
 #  deleted_at         :datetime
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  crawl_id           :string(255)      not null
 #  candidate_no       :string(255)      default(""), not null
+#  number             :string(255)      default("")
+#  property           :string(255)      default("")
+#  military           :string(255)      default("")
+#  candidate_number   :string(255)      default("")
+#  tax_payment        :string(255)      default("")
+#  latest_arrears     :string(255)      default("")
+#  arrears            :string(255)      default("")
 #
 
 class Candidate < ApplicationRecord
@@ -37,8 +43,36 @@ class Candidate < ApplicationRecord
            dependent: :destroy,
            inverse_of: :context
 
+  has_many :property_photos,
+           -> { where(photo_type: 'p') },
+           class_name: 'Photo',
+           as: :context,
+           dependent: :destroy,
+           inverse_of: :context
+
+  has_many :tax_photos,
+           -> { where(photo_type: 't') },
+           class_name: 'Photo',
+           as: :context,
+           dependent: :destroy,
+           inverse_of: :context
+
+  has_many :military_photos,
+           -> { where(photo_type: 'm') },
+           class_name: 'Photo',
+           as: :context,
+           dependent: :destroy,
+           inverse_of: :context
+
   has_many :criminal_photos,
            -> { where(photo_type: 'c') },
+           class_name: 'Photo',
+           as: :context,
+           dependent: :destroy,
+           inverse_of: :context
+
+  has_many :election_photos,
+           -> { where(photo_type: 'el') },
            class_name: 'Photo',
            as: :context,
            dependent: :destroy,

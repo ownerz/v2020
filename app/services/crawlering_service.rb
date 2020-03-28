@@ -8,9 +8,13 @@ require 'open-uri'
 class CrawleringService
   # include Singleton
 
-  CRIMINAL_RECORD_REPORT_ID = 5 # 전과
-  EDUCATION_RECORD_REPORT_ID = 1 # 학력
   ELECTION_ID = "0020200415"
+  EDUCATION_RECORD_REPORT_ID = 1 # 학력
+  PROPERTY_RECORD_REPORT_ID = 2 # 재산
+  TAX_RECORD_REPORT_ID = 3 # 납세
+  MILITARY_RECORD_REPORT_ID = 4 # 병역
+  CRIMINAL_RECORD_REPORT_ID = 5 # 전과
+  ELECTION_RECORD_REPORT_ID = 8 # 공직선거 경력
 
   CACHE_BASE_URL = "https://d27ae9hz5eoziu.cloudfront.net"
 
@@ -212,7 +216,8 @@ class CrawleringService
     headers = Hash.new
     headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
     url = 'http://info.nec.go.kr/electioninfo/candidate_detail_scanSearchJson.json'
-    body = "gubun=#{report_id}&electionId=#{ELECTION_ID}&huboId=#{candidate_id}&statementId=PCRI03_candidate_scanSearch"
+    # body = "gubun=#{report_id}&electionId=#{ELECTION_ID}&huboId=#{candidate_id}&statementId=PCRI03_candidate_scanSearch"
+    body = "gubun=#{report_id}&electionId=#{ELECTION_ID}&huboId=#{candidate_id}&statementId=CPRI03_candidate_scanSearch"
     res = http_post_request url, headers, body
     res.body
 
@@ -254,11 +259,9 @@ class CrawleringService
         # voting_district = city.voting_districts.last
         # ################### for test
 
+        # 메인 화면 (시도->선거구->검색)
         doc = Nokogiri::HTML(get_election_info(election.code, city.code, voting_district.code))
         candidates = get_candidates(doc)
-
-        temp_candidates = []
-
         begin
           # p candidates
           candidates.each do |candidate|
@@ -273,7 +276,7 @@ class CrawleringService
                                             name: name,
                                             birth_date: birth_date
                                             )
-            if c.new_record?
+            # if c.new_record?
               c.voting_district = voting_district
               c.photo = "http://info.nec.go.kr#{candidate.dig('사진')}"
               c.sex = candidate.dig('성별')
@@ -282,53 +285,93 @@ class CrawleringService
               c.education = candidate.dig('학력')
               c.career = candidate.dig('경력')
               c.criminal_record = candidate.dig('전과기록유무(건수)')
-              c.reg_date = candidate.dig('등록일자')
+              # c.reg_date = candidate.dig('등록일자')
               c.crawl_id = crawl_id
+
+              c.number = candidate.dig('기호')
+              c.property = candidate.dig('재산신고액(천원)')
+              c.military = candidate.dig('병역신고사항(본인)')
+              c.candidate_number = candidate.dig('입후보횟수')
+              c.tax_payment = candidate.dig('납부액')
+              c.latest_arrears = candidate.dig('최근5년간체납액')
+              c.arrears = candidate.dig('현체납액')
+
               c.candidate_no = File.basename(candidate.dig('사진'), '.*').gsub('thumbnail.', '')
               c.wiki_page = get_namuwiki_page(c.name.split('(').first)
               c.save!
 
               @logger.info("#{electoral_district} 선거구의 #{party} #{name} 후보자 등록")
 
-              # 전과 기록
-              unless c.criminal_record.include?("없음")
-                criminal_pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
-                if criminal_pdf_url.present?
-                  # save_photo(c, 'c', criminal_pdf_url)
-                  # jpg_path = PdfService.new.convert(upload_path)
-                  # save_photo_info(c, 'criminal', criminal_pdf_url, upload_path)
-
-                  save_photo_info(c, 'c', criminal_pdf_url)
-                end
-
+              # 학력
+              unless c.education_photos.present?
+                pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
+                save_photo_info(c, 'e', pdf_url) if pdf_url.present?
                 sleep 1
               end
 
-              # 학력
-              education_pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
-              if education_pdf_url.present?
-                # upload_path = "tmp/e_#{c.candidate_no}.pdf"
-                # jpg_path = PdfService.new.convert(upload_path)
-                # save_photo_info(c, 'e', education_pdf_url, upload_path)
-                # save_photo(c, 'e', education_pdf_url)
-                save_photo_info(c, 'e', education_pdf_url)
+              # 재산
+              unless c.property_photos.present?
+                pdf_url = candidate_detail_info(PROPERTY_RECORD_REPORT_ID, c.candidate_no)
+                save_photo_info(c, 'p', pdf_url) if pdf_url.present?
+                sleep 1
+              end
+
+              # 납세
+              unless c.tax_photos.present?
+                pdf_url = candidate_detail_info(TAX_RECORD_REPORT_ID, c.candidate_no)
+                save_photo_info(c, 't', pdf_url) if pdf_url.present?
+                sleep 1
+              end
+
+              # 병역
+              unless c.military_photos.present?
+                pdf_url = candidate_detail_info(MILITARY_RECORD_REPORT_ID, c.candidate_no)
+                save_photo_info(c, 'm', pdf_url) if pdf_url.present?
+                sleep 1
+              end
+
+              # 전과 기록
+              unless c.criminal_photos.present?
+                unless c.criminal_record.include?("없음")
+                  pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
+                  if pdf_url.present?
+
+                    # save_photo(c, 'c', criminal_pdf_url)
+                    # jpg_path = PdfService.new.convert(upload_path)
+                    # save_photo_info(c, 'c', criminal_pdf_url, upload_path)
+
+                    save_photo_info(c, 'c', pdf_url)
+                  end
+
+                  sleep 1
+                end
+              end
+
+              # 공직선거 경력
+              unless c.election_photos.present?
+                pdf_url = candidate_detail_info(ELECTION_RECORD_REPORT_ID, c.candidate_no)
+                save_photo_info(c, 'el', pdf_url) if pdf_url.present?
+                sleep 1
               end
 
               @logger.info("크롤된 후보자 : #{electoral_district} 선거구의 #{party} #{name} ")
-              temp_candidates.push({
-                party: party,
-                name: name,
-                birth_date: birth_date
-              })
+              # temp_candidates.push({
+              #   party: party,
+              #   name: name,
+              #   birth_date: birth_date
+              # })
               # TempCandidate.create(electoral_district: electoral_district, 
               #                     party: party,
               #                     name: name)
-            end
+            # else
+            #   # update updated_at
+            #   c.touch
+            # end
           end
 
           ## 
           # remove_leaved_candidates(voting_district, temp_candidates)
-          sleep 4
+          sleep 7
 
         rescue => e
           @logger.error("후보 등록 오류 : #{e.message}")
@@ -337,10 +380,10 @@ class CrawleringService
     end
 
     # ## Candidate 에는 있고, TempCandidate 는 없는 후보자는 삭제 한다. 
-    # remove_leaved_candidates
-
+    remove_leaved_candidates
     @logger.info("crawlering finished!")
-    return crawl_id
+    # return crawl_id
+    return ''
   rescue => e
     @logger.error("Error : #{e.message}")
   end
@@ -348,35 +391,42 @@ class CrawleringService
   private
 
   def remove_leaved_candidates(voting_district, temp_candidates)
-    # Candidate.where(voting_district: voting_district).each do |c1|
-    Candidate.where(voting_district: voting_district).where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).each do |c1|
-      leaved_candidate = true
-      temp_candidates.each do |c2|
-        if c1.party == c2[:party] && c1.name == c2[:name] && c1.birth_date == c2[:birth_date]
-          leaved_candidate = false
-          break
-        end
-      end
-
-      if leaved_candidate == true
-        @logger.info("remove_leaved_candidates] #{c1.name} 삭제")
-        c1.destroy 
-      end
+    # Candidate.where('updated_at >= ?', 3.days.ago).destroy_all
+    Candidate.where('updated_at <= ?', 3.days.ago).each do |candidate|
+      @logger.info("remove_leaved_candidates] #{candidate.name} 삭제")
     end
-
-    # return if TempCandidate.all.size < 1
-    # records_array = ActiveRecord::Base.connection.exec_query("select * from (select candidates.id cid, tmp.id t_cid FROM candidates left outer JOIN temp_candidates tmp ON tmp.electoral_district = candidates.electoral_district and tmp.party = candidates.party and tmp.name = candidates.name) results where results.t_cid is NULL")
-    # records_array.each do |record|
-    #   Candidate.find(record.dig('cid')).destroy
-    # end
   end
+
+  # def remove_leaved_candidates(voting_district, temp_candidates)
+  #   # Candidate.where(voting_district: voting_district).each do |c1|
+  #   Candidate.where(voting_district: voting_district).where.not(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day).each do |c1|
+  #     leaved_candidate = true
+  #     temp_candidates.each do |c2|
+  #       if c1.party == c2[:party] && c1.name == c2[:name] && c1.birth_date == c2[:birth_date]
+  #         leaved_candidate = false
+  #         break
+  #       end
+  #     end
+
+  #     if leaved_candidate == true
+  #       @logger.info("remove_leaved_candidates] #{c1.name} 삭제")
+  #       c1.destroy 
+  #     end
+  #   end
+
+  #   # return if TempCandidate.all.size < 1
+  #   # records_array = ActiveRecord::Base.connection.exec_query("select * from (select candidates.id cid, tmp.id t_cid FROM candidates left outer JOIN temp_candidates tmp ON tmp.electoral_district = candidates.electoral_district and tmp.party = candidates.party and tmp.name = candidates.name) results where results.t_cid is NULL")
+  #   # records_array.each do |record|
+  #   #   Candidate.find(record.dig('cid')).destroy
+  #   # end
+  # end
 
   def save_photo_info(candidate, photo_type, pdf_url)
     begin
       # s3_path = "tmp/#{photo_type}_#{candidate.candidate_no}.pdf"
-
       # FileService.instance.direct_upload(pdf_url, s3_path)
       # candidate.photos.create(photo_type: photo_type, url: "#{CACHE_BASE_URL}/#{s3_path}") 
+
       candidate.photos.create(photo_type: photo_type, url: pdf_url) 
     rescue => exception
       @logger.error("upload s3 error : #{pdf_url}")
@@ -494,14 +544,22 @@ class CrawleringService
   def get_candidates(doc)
     table = doc.search('.table01')
   
-    column_names = table.css('thead tr th').map(&:text)
+    # column_names = table.css('thead tr th').map(&:text)
     # print column_names
-  
+    column_names = ["선거구명", "사진", "기호", "소속정당명", "성명(한자)", "성별", "생년월일(연령)", "주소", "직업", "학력", "경력", "재산신고액(천원)", "병역신고사항(본인)", "납부액", "최근5년간체납액", "현체납액", "전과기록유무(건수)", "입후보횟수"]
+
     rows = table.css('tbody tr')
     text_all_rows = rows.map do |row|
       row_values = []
+
       row.css('td').each do |r|
-        if r.css('input').empty? # 일반 column
+        # if r.css('input').empty? # 일반 column
+        #   row_values << r.text.gsub(/\t|\n|\r/, '')
+        # else  # photo
+        #   row_values << r.at_css('input').attr('src')
+        # end
+
+        unless r.at_css('input')&.attr('src').present?
           row_values << r.text.gsub(/\t|\n|\r/, '')
         else  # photo
           row_values << r.at_css('input').attr('src')
@@ -509,6 +567,7 @@ class CrawleringService
       end
       row_values
     end
+
   
     candidates = []
     text_all_rows.each do |row_as_text|
@@ -552,6 +611,7 @@ class CrawleringService
     res.body
   end
 
+  # 메인 화면 (시도->선거구->검색)
   def get_election_info(election_code, city_code, sgg_city_codes)
     headers = Hash.new
     headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -561,7 +621,8 @@ class CrawleringService
     # file.close
     # data
     url = 'http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml'
-    body = "electionId=#{ELECTION_ID}&requestURI=/WEB-INF/jsp/electioninfo/#{ELECTION_ID}/pc/pcri03_ex.jsp&topMenuId=PC&statementId=PCRI03_#2&electionCode=#{election_code}&cityCode=#{city_code}&sggCityCode=#{sgg_city_codes}"
+    body = "electionId=#{ELECTION_ID}&requestURI=/WEB-INF/jsp/electioninfo/#{ELECTION_ID}/cp/cpri03.jsp&topMenuId=CP&statementId=CPRI03_#2&electionCode=#{election_code}&cityCode=#{city_code}&sggCityCode=#{sgg_city_codes}"
+    # body = "electionId=#{ELECTION_ID}&requestURI=/WEB-INF/jsp/electioninfo/#{ELECTION_ID}/pc/pcri03_ex.jsp&topMenuId=PC&statementId=PCRI03_#2&electionCode=#{election_code}&cityCode=#{city_code}&sggCityCode=#{sgg_city_codes}"
     res = http_post_request url, headers, body
     res.body
   end
