@@ -25,6 +25,7 @@ module Api
         else
           @voting_districts = @district.present?? VotingDistrict.where(id: @district) : VotingDistrict.all
         end
+
         @voting_districts = @voting_districts.page(params[:page]).per(params[:per_page])
         @meta = get_page_info(@voting_districts).merge(meta_status)
       end

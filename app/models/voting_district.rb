@@ -13,7 +13,7 @@
 class VotingDistrict < Code
   has_one :district_detail, :foreign_key => :code_id
   has_one :congressman, :foreign_key => :code_id
-  has_many :candidates, :foreign_key => :code_id
+  has_many :candidates, -> {order(number: :asc)}, :foreign_key => :code_id
   has_many :districts, foreign_key: :parent_id
   belongs_to :city, class_name: 'City', :foreign_key => :parent_id
 
