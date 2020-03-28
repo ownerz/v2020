@@ -14,15 +14,27 @@ if candidate.present?
   json.job candidate.job
   json.education candidate.education
   json.career candidate.career
-  json.criminal_record candidate.criminal_record
 
-  json.criminal_photos candidate.criminal_photos, partial: '/api/v1/candidates/photo', as: :photo
-  json.education_photos candidate.education_photos, partial: '/api/v1/candidates/photo', as: :photo
+  # json.criminal_record candidate.criminal_record
+  # json.education_photos candidate.education_photos, partial: '/api/v1/candidates/photo', as: :photo
+  # json.property_photos candidate.property_photos, partial: '/api/v1/candidates/photo', as: :photo
+  # json.tax_photos candidate.tax_photos, partial: '/api/v1/candidates/photo', as: :photo
+  # json.military_photos candidate.military_photos, partial: '/api/v1/candidates/photo', as: :photo
+  # json.criminal_photos candidate.criminal_photos, partial: '/api/v1/candidates/photo', as: :photo
+  # json.election_photos candidate.election_photos, partial: '/api/v1/candidates/photo', as: :photo
 
   # json.criminal_photos candidate.criminal_photos
   # json.education_photos candidate.education_photos
-  json.reg_date candidate.reg_date
-  json.wiki_page candidate.wiki_page
+  # json.reg_date candidate.reg_date
+  # json.wiki_page candidate.wiki_page
+
+  json.number candidate.number
+  json.property candidate.property
+  json.military candidate.military
+  # json.candidate_number candidate.candidate_number
+  json.tax_payment candidate.tax_payment
+  json.latest_arrears candidate.latest_arrears
+  json.arrears candidate.arrears
 
   # 후보자를 bookmark 한 user 수
   json.followers candidate.followers.size
