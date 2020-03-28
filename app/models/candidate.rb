@@ -44,7 +44,7 @@ class Candidate < ApplicationRecord
            inverse_of: :context
 
   has_many :property_photos,
-           -> { where(photo_type: 'p') },
+           -> { where(photo_type: 'pp') },
            class_name: 'Photo',
            as: :context,
            dependent: :destroy,
@@ -84,5 +84,6 @@ class Candidate < ApplicationRecord
   has_many :followers, through: :likes, source: :user
 
   belongs_to :voting_district, class_name: 'VotingDistrict', :foreign_key => :code_id
+
 end
 

@@ -35,6 +35,14 @@ module Api
         @comments = @candidate.comments
       end
 
+      def order_by_followers
+        Candidate.left_joins(:followers)
+                  .select("candidates.id, candidates.electoral_district, candidates.party, candidates.name, count(likes.id) as follower_count")
+                  .group(:id)
+                  .order('follower_count DESC')
+                  .limit(10)
+      end
+
       private
 
       def set_current_user

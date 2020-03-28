@@ -249,7 +249,7 @@ class CrawleringService
     TempCandidate.all.destroy_all
 
     election = Election.find_by(code:2)
-    crawl_id = SecureRandom.hex(5)
+    # crawl_id = SecureRandom.hex(5)
 
     election.cities.each do |city|
       city.voting_districts.each do |voting_district|
@@ -286,7 +286,7 @@ class CrawleringService
               c.career = candidate.dig('경력')
               c.criminal_record = candidate.dig('전과기록유무(건수)')
               # c.reg_date = candidate.dig('등록일자')
-              c.crawl_id = crawl_id
+              # c.crawl_id = crawl_id
 
               c.number = candidate.dig('기호')
               c.property = candidate.dig('재산신고액(천원)')
@@ -371,7 +371,7 @@ class CrawleringService
 
           ## 
           # remove_leaved_candidates(voting_district, temp_candidates)
-          sleep 7
+          sleep 12
 
         rescue => e
           @logger.error("후보 등록 오류 : #{e.message}")
