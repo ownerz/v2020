@@ -62,6 +62,12 @@ device-id: 851aea3865656f8c
 
 ###
 # 게시판
+GET http://localhost:3000/api/v1/heads
+Content-Type: application/json
+device-id: 851aea3865656f8c
+
+###
+# 게시판
 GET http://localhost:3000/api/v1/boards?notice=y
 Content-Type: application/json
 device-id: 851aea3865656f8c
@@ -124,10 +130,10 @@ device-id: 851aea3865656f8c
 {
   "data" : {
     "board_type":0,
-    "title":"후보자 정보 관련 공지",
-    "body":"현재 지역구 별로 제공 되는 후보자 리스트는 선관위 홈페이지 등록된 예비 후보자 명단입니다.\n추후 선관위 홈페이지에 정식 후보자 정보가 업데이트 되면 앱에서 제공하는 후보자 리스트도 갱신할 예정 입니다.",
+    "title":"IOS 사용자 업데이트 공지",
+    "body":"안녕하세요.\n정식 후보자를 위한 추가 정보 제공 화면과 안정성이 업데이트 되었습니다. \nIOS 사용자 분들은 최신 앱 버전으로 업데이트 바랍니다. \n감사합니다. ",
     "link":"",
-    "seq":0
+    "seq":-2
   }
 }
 
@@ -180,4 +186,17 @@ device-id: 851aea3865656f8c
 }
 
 ###
-GET http://13.209.167.197/api/v1/boards
+# 게시판
+POST http://localhost:3000/api/v1/boards
+Content-Type: application/json
+device-id: 851aea3865656f8c
+
+{
+  "data" : {
+    "board_type":2,
+    "title":"두근두근 첫선거, 이것이 알고싶다-학생편",
+    "body":"",
+    "link":"https://www.nec.go.kr/portalVt/bbs/view/B0000424/40095.do?menuNo=200192&searchOption5=Y&searchWrd=&searchCnd=&viewType=T&pageIndex=1",
+    "seq":0
+  }
+}
