@@ -12,7 +12,7 @@ module Api
 
       # candidate list
       def index
-        if params[:candidate_type]&.eql?('proportional') # 비례후보
+        if params[:party_number].present? && params[:party_number].to_i > 0 # 비례후보
           @candidates = Candidate.where(candidate_type: :proportional) 
           @candidates = @candidates.where(party_number: params[:party_number]) 
           @candidates = @candidates.order('number*1 asc')

@@ -119,7 +119,8 @@ device-id: {{device-id}}
 #
 # 비례후보 요청
 # GET {{server}}/api/v1/candidates?page=1&per=10&candidate_type=proportional&party_number=3
-GET {{server}}/api/v1/candidates
+GET {{server}}/api/v1/candidates?page=1&per=10&party_number=3
+# GET {{server}}/api/v1/candidates
 # GET {{server}}/api/v1/candidates?page=1&per=10&x=129.014032&y=35.412894
 # GET {{server}}/api/v1/candidates?page=1&per=10&x=126.973457&y=37.555465
 Content-Type: application/json
