@@ -465,6 +465,7 @@ class CrawleringService
                                             birth_date: birth_date
                                             )
             if c.new_record?
+              c.candidate_type = :formal
               c.voting_district = voting_district
               c.photo = "http://info.nec.go.kr#{candidate.dig('사진')}"
               c.sex = candidate.dig('성별')

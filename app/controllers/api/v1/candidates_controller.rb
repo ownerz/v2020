@@ -7,19 +7,20 @@ module Api
 
       before_action :set_meta
       before_action :set_district, only: [:index]
-
       before_action :set_current_user, only: %i[show_comments create_comments index show]
       before_action :set_candidate, only: %i[show_comments create_comments show]
 
       # candidate list
       def index
-        @liked_candidates = @current_user.liked_candidates.pluck('id')
-
-        # candidate = Candidate.last
-        @candidates = @district.present?? Candidate.where(voting_district: @district) : Candidate.all
-        # @candidates = @candidates.where(crawl_id: candidate&.crawl_id)
-        # @candidates = @candidates.order(number: :asc)
-        @candidates = @candidates.order('number*1 asc')
+        if params[:candidate_type]&.eql?('proportional') # 비례후보
+          @candidates = Candidate.where(candidate_type: :proportional) 
+          @candidates = @candidates.where(party_number: params[:party_number]) 
+          @candidates = @candidates.order('number*1 asc')
+        else # 정식후보
+          @liked_candidates = @current_user.liked_candidates.pluck('id')
+          @candidates = @district.present?? Candidate.where(voting_district: @district) : Candidate.all
+          @candidates = @candidates.order('number*1 asc')
+        end
         @candidates = @candidates.page(params[:page]).per(params[:per_page])
         @meta = get_page_info(@candidates).merge(meta_status)
       end
