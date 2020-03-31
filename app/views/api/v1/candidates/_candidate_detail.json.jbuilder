@@ -3,7 +3,7 @@
 if candidate.present?
   json.id candidate.id
   # json.district_code candidate.code_id
-  json.voting_district_name candidate.voting_district.name1
+  json.voting_district_name candidate.voting_district&.name1.present?? candidate.voting_district.name1 : ''
   json.electoral_district candidate.electoral_district
   json.party candidate.party
   json.candidate_type candidate.candidate_type
@@ -43,5 +43,4 @@ if candidate.present?
 
   # # 내가 좋아요 한 후보인지.
   # json.liked @liked_candidates.present?? @liked_candidates.include?(candidate.id) : false
-
 end
