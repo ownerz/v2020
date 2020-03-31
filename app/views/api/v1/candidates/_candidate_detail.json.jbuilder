@@ -6,6 +6,8 @@ if candidate.present?
   json.voting_district_name candidate.voting_district.name1
   json.electoral_district candidate.electoral_district
   json.party candidate.party
+  json.candidate_type candidate.candidate_type
+  json.party_number candidate.party_number
   json.name candidate.name
   json.photo candidate.photo
   json.sex candidate.sex

@@ -5,6 +5,62 @@ require 'faraday'
 require 'nokogiri'
 require 'open-uri'
 
+## 
+# 비례당당
+# code 정당명
+# ----------------
+# 100  더불어민주당
+# 200  미래통합당
+# 2080 민생당
+# 5037 미래한국당
+# 5048 더불어시민당
+# 730  정의당
+# 5000 우리공화당
+# 5010 민중당
+# 3060 한국경제당
+# 5040 국민의당
+# 5044 친박신당
+# 5049 열린민주당
+# 1970 코리아
+# 3070 가자!평화인권당
+# 5039 가자환경당
+# 2010 공화당
+# 5031 국가혁명배당금당
+# 4080 국민새정당
+# 2070 국민참여신당
+# 2020 기독당
+# 3040 기독자유통일당
+# 5035 기본소득당
+# 5052 깨어있는시민연대당
+# 5051 남북통일당
+# 1988 노동당
+# 710  녹색당
+# 3010 대한당
+# 650  대한민국당
+# 4040 미래당
+# 5047 미래민주당
+# 1980 미래자영업당
+# 4010 민중민주당
+# 700  사이버모바일국민정책당
+# 4070 새누리당
+# 5042 시대전환
+# 5046 여성의당
+# 5053 우리당
+# 5043 자유당
+# 5030 새벽당
+# 5050 정치개혁연합
+# 5045 자영업당
+# 5033 직능자영업당
+# 5041 충청의미래당
+# 2000 친박연대
+# 2060 통일민주당
+# 4000 통합민주당
+# 2050 한국국민당
+# 3000 한국복지당
+# 1990 한나라당
+# 3050 한반도미래연합
+# 4060 홍익당
+
 class CrawleringService
   # include Singleton
 
@@ -123,6 +179,139 @@ class CrawleringService
       end
 
       sleep 5
+    end
+  end
+
+  def save_photos(c)
+    # 학력
+    unless c.education_photos.present?
+      pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
+      save_photo_info(c, 'e', pdf_url) if pdf_url.present?
+      sleep 1
+    end
+
+    # 재산
+    unless c.property_photos.present?
+      pdf_url = candidate_detail_info(PROPERTY_RECORD_REPORT_ID, c.candidate_no)
+      save_photo_info(c, 'p', pdf_url) if pdf_url.present?
+      sleep 1
+    end
+
+    # 납세
+    unless c.tax_photos.present?
+      pdf_url = candidate_detail_info(TAX_RECORD_REPORT_ID, c.candidate_no)
+      save_photo_info(c, 't', pdf_url) if pdf_url.present?
+      sleep 1
+    end
+
+    # 병역
+    unless c.military_photos.present?
+      pdf_url = candidate_detail_info(MILITARY_RECORD_REPORT_ID, c.candidate_no)
+      save_photo_info(c, 'm', pdf_url) if pdf_url.present?
+      sleep 1
+    end
+
+    # 전과 기록
+    unless c.criminal_photos.present?
+      unless c.criminal_record.include?("없음")
+        pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
+        if pdf_url.present?
+
+          # save_photo(c, 'c', criminal_pdf_url)
+          # jpg_path = PdfService.new.convert(upload_path)
+          # save_photo_info(c, 'c', criminal_pdf_url, upload_path)
+
+          save_photo_info(c, 'c', pdf_url)
+        end
+
+        sleep 1
+      end
+    end
+
+    # 공직선거 경력
+    unless c.election_photos.present?
+      pdf_url = candidate_detail_info(ELECTION_RECORD_REPORT_ID, c.candidate_no)
+      save_photo_info(c, 'el', pdf_url) if pdf_url.present?
+      sleep 1
+    end
+  end
+
+  # 비례대표 크롤링 (http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml)
+  def proportional_party
+    PoliticalParty.all.each do |pp|
+
+      doc = Nokogiri::HTML(get_proportional_info(7, pp.code))
+      candidates = get_proportional_candidates(doc)
+      next if candidates&.first&.dig('선거구명') == '검색된 결과가 없습니다.'
+
+      begin
+        candidates.each do |candidate|
+          # '선거구명' # 비례정당
+          # candidate.dig('사진') 
+          # candidate.dig('소속정당명(기호)') 
+          # candidate.dig('추천순위') 
+          # candidate.dig('성명(한자)') 
+          # candidate.dig('성별') 
+          # candidate.dig('생년월일(연령)') 
+          # candidate.dig('주소') 
+          # candidate.dig('직업') 
+          # candidate.dig('학력') 
+          # candidate.dig('경력') 
+          # candidate.dig('재산신고액(천원)') 
+          # candidate.dig('병역신고사항(본인)') 
+          # candidate.dig('납부액') 
+          # candidate.dig('최근5년간체납액') 
+          # candidate.dig('현체납액') 
+          # candidate.dig('전과기록유무(건수)') 
+          # candidate.dig('입후보횟수')
+
+          electoral_district = candidate.dig('선거구명').gsub(' ', '')
+          party_array = candidate.dig('소속정당명(기호)').gsub(' ', '').gsub(')', '').split('(')
+          name = candidate.dig('성명(한자)').gsub(' ', '')
+          birth_date = candidate.dig('생년월일(연령)').gsub(' ', '')
+
+          c = Candidate.find_or_initialize_by(electoral_district: '비례정당',
+                                          party: party_array[0],
+                                          name: name,
+                                          birth_date: birth_date)
+          # if c.new_record?
+            c.political_party = PoliticalParty.find_by(name1: party_array[0])
+            if c.political_party.present?
+              c.political_party.number = party_array[1].to_i
+              c.political_party.save!
+            end
+            
+            c.candidate_type = :proportional
+            c.party_number = party_array[1].to_i # 정당 기호
+            # c.voting_district = voting_district
+            c.photo = "http://info.nec.go.kr#{candidate.dig('사진')}"
+            c.sex = candidate.dig('성별')
+            c.address = candidate.dig('주소')
+            c.job = candidate.dig('직업')
+            c.education = candidate.dig('학력')
+            c.career = candidate.dig('경력')
+            c.criminal_record = candidate.dig('전과기록유무(건수)')
+            c.number = candidate.dig('추천순위')
+            c.property = candidate.dig('재산신고액(천원)')
+            c.military = candidate.dig('병역신고사항(본인)')
+            c.candidate_number = candidate.dig('입후보횟수')
+            c.tax_payment = candidate.dig('납부액')
+            c.latest_arrears = candidate.dig('최근5년간체납액')
+            c.arrears = candidate.dig('현체납액')
+            c.candidate_no = File.basename(candidate.dig('사진'), '.*').gsub('thumbnail.', '')
+            c.wiki_page = get_namuwiki_page(c.name.split('(').first)
+            c.save!
+
+            save_photos(c)
+            @logger.info("크롤된 후보자 : #{c.party} 당의 #{name} ")
+          # else
+          #   # update updated_at
+          #   c.touch
+          # end
+        end
+      end
+      byebug
+      sleep 10
     end
   end
 
@@ -276,7 +465,7 @@ class CrawleringService
                                             name: name,
                                             birth_date: birth_date
                                             )
-            # if c.new_record?
+            if c.new_record?
               c.voting_district = voting_district
               c.photo = "http://info.nec.go.kr#{candidate.dig('사진')}"
               c.sex = candidate.dig('성별')
@@ -301,58 +490,59 @@ class CrawleringService
               c.save!
 
               @logger.info("#{electoral_district} 선거구의 #{party} #{name} 후보자 등록")
+              save_photos(c)
 
-              # 학력
-              unless c.education_photos.present?
-                pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
-                save_photo_info(c, 'e', pdf_url) if pdf_url.present?
-                sleep 1
-              end
+              # # 학력
+              # unless c.education_photos.present?
+              #   pdf_url = candidate_detail_info(EDUCATION_RECORD_REPORT_ID, c.candidate_no)
+              #   save_photo_info(c, 'e', pdf_url) if pdf_url.present?
+              #   sleep 1
+              # end
 
-              # 재산
-              unless c.property_photos.present?
-                pdf_url = candidate_detail_info(PROPERTY_RECORD_REPORT_ID, c.candidate_no)
-                save_photo_info(c, 'p', pdf_url) if pdf_url.present?
-                sleep 1
-              end
+              # # 재산
+              # unless c.property_photos.present?
+              #   pdf_url = candidate_detail_info(PROPERTY_RECORD_REPORT_ID, c.candidate_no)
+              #   save_photo_info(c, 'p', pdf_url) if pdf_url.present?
+              #   sleep 1
+              # end
 
-              # 납세
-              unless c.tax_photos.present?
-                pdf_url = candidate_detail_info(TAX_RECORD_REPORT_ID, c.candidate_no)
-                save_photo_info(c, 't', pdf_url) if pdf_url.present?
-                sleep 1
-              end
+              # # 납세
+              # unless c.tax_photos.present?
+              #   pdf_url = candidate_detail_info(TAX_RECORD_REPORT_ID, c.candidate_no)
+              #   save_photo_info(c, 't', pdf_url) if pdf_url.present?
+              #   sleep 1
+              # end
 
-              # 병역
-              unless c.military_photos.present?
-                pdf_url = candidate_detail_info(MILITARY_RECORD_REPORT_ID, c.candidate_no)
-                save_photo_info(c, 'm', pdf_url) if pdf_url.present?
-                sleep 1
-              end
+              # # 병역
+              # unless c.military_photos.present?
+              #   pdf_url = candidate_detail_info(MILITARY_RECORD_REPORT_ID, c.candidate_no)
+              #   save_photo_info(c, 'm', pdf_url) if pdf_url.present?
+              #   sleep 1
+              # end
 
-              # 전과 기록
-              unless c.criminal_photos.present?
-                unless c.criminal_record.include?("없음")
-                  pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
-                  if pdf_url.present?
+              # # 전과 기록
+              # unless c.criminal_photos.present?
+              #   unless c.criminal_record.include?("없음")
+              #     pdf_url = candidate_detail_info(CRIMINAL_RECORD_REPORT_ID, c.candidate_no)
+              #     if pdf_url.present?
 
-                    # save_photo(c, 'c', criminal_pdf_url)
-                    # jpg_path = PdfService.new.convert(upload_path)
-                    # save_photo_info(c, 'c', criminal_pdf_url, upload_path)
+              #       # save_photo(c, 'c', criminal_pdf_url)
+              #       # jpg_path = PdfService.new.convert(upload_path)
+              #       # save_photo_info(c, 'c', criminal_pdf_url, upload_path)
 
-                    save_photo_info(c, 'c', pdf_url)
-                  end
+              #       save_photo_info(c, 'c', pdf_url)
+              #     end
 
-                  sleep 1
-                end
-              end
+              #     sleep 1
+              #   end
+              # end
 
-              # 공직선거 경력
-              unless c.election_photos.present?
-                pdf_url = candidate_detail_info(ELECTION_RECORD_REPORT_ID, c.candidate_no)
-                save_photo_info(c, 'el', pdf_url) if pdf_url.present?
-                sleep 1
-              end
+              # # 공직선거 경력
+              # unless c.election_photos.present?
+              #   pdf_url = candidate_detail_info(ELECTION_RECORD_REPORT_ID, c.candidate_no)
+              #   save_photo_info(c, 'el', pdf_url) if pdf_url.present?
+              #   sleep 1
+              # end
 
               @logger.info("크롤된 후보자 : #{electoral_district} 선거구의 #{party} #{name} ")
               # temp_candidates.push({
@@ -363,10 +553,10 @@ class CrawleringService
               # TempCandidate.create(electoral_district: electoral_district, 
               #                     party: party,
               #                     name: name)
-            # else
-            #   # update updated_at
-            #   c.touch
-            # end
+            else
+              # update updated_at
+              c.touch
+            end
           end
 
           ## 
@@ -541,24 +731,106 @@ class CrawleringService
     column_datas
   end
 
-  def get_candidates(doc)
+  # 비례 후보자 크롤링.
+  # electionId: 0020200415
+  # requestURI: /WEB-INF/jsp/electioninfo/0020200415/cp/cpri03.jsp
+  # topMenuId: CP
+  # secondMenuId: CPRI03
+  # menuId: CPRI03
+  # statementId: CPRI03_#7
+  # electionCode: 7
+  # cityCode: -1
+  # sggCityCode: -1
+  # proportionalRepresentationCode: 5037
+  # townCode: -1
+  # sggTownCode: 0
+  # dateCode: 0
+  # x: 30
+  # y: 11
+  def get_proportional_info(election_code, proportionalRepresentationCode)
+    headers = Hash.new
+    headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    url = 'http://info.nec.go.kr/electioninfo/electionInfo_report.xhtml'
+    body = "electionId=#{ELECTION_ID}&requestURI=/WEB-INF/jsp/electioninfo/#{ELECTION_ID}/cp/cpri03.jsp&topMenuId=CP&statementId=CPRI03_#7&electionCode=#{election_code}&cityCode=-1&sggCityCode=-1&proportionalRepresentationCode=#{proportionalRepresentationCode}"
+    # body = "electionId=#{ELECTION_ID}&requestURI=/WEB-INF/jsp/electioninfo/#{ELECTION_ID}/pc/pcri03_ex.jsp&topMenuId=PC&statementId=PCRI03_#2&electionCode=#{election_code}&cityCode=#{city_code}&sggCityCode=#{sgg_city_codes}"
+    res = http_post_request url, headers, body
+    res.body
+  end
+
+  # 비례 후보자 list 출력.
+  def get_proportional_candidates(doc)
     table = doc.search('.table01')
-  
-    # column_names = table.css('thead tr th').map(&:text)
-    # print column_names
-    column_names = ["선거구명", "사진", "기호", "소속정당명", "성명(한자)", "성별", "생년월일(연령)", "주소", "직업", "학력", "경력", "재산신고액(천원)", "병역신고사항(본인)", "납부액", "최근5년간체납액", "현체납액", "전과기록유무(건수)", "입후보횟수"]
+    column_names = ["선거구명", 
+                    "사진", 
+                    "소속정당명(기호)", 
+                    "추천순위", 
+                    "성명(한자)", 
+                    "성별", 
+                    "생년월일(연령)", 
+                    "주소", 
+                    "직업", 
+                    "학력", 
+                    "경력", 
+                    "재산신고액(천원)", 
+                    "병역신고사항(본인)", 
+                    "납부액", 
+                    "최근5년간체납액", 
+                    "현체납액", 
+                    "전과기록유무(건수)", 
+                    "입후보횟수"]
 
     rows = table.css('tbody tr')
     text_all_rows = rows.map do |row|
       row_values = []
 
       row.css('td').each do |r|
-        # if r.css('input').empty? # 일반 column
-        #   row_values << r.text.gsub(/\t|\n|\r/, '')
-        # else  # photo
-        #   row_values << r.at_css('input').attr('src')
-        # end
+        unless r.at_css('input')&.attr('src').present?
+          row_values << r.text.gsub(/\t|\n|\r/, '')
+        else  # photo
+          row_values << r.at_css('input').attr('src')
+        end
+      end
+      row_values
+    end
 
+  
+    candidates = []
+    text_all_rows.each do |row_as_text|
+       candidates << column_names.zip(row_as_text).to_h
+    end # =>
+
+    candidates
+  end
+
+  def get_candidates(doc)
+    table = doc.search('.table01')
+  
+    # column_names = table.css('thead tr th').map(&:text)
+    # print column_names
+    column_names = ["선거구명", 
+                    "사진", 
+                    "기호", 
+                    "소속정당명", 
+                    "성명(한자)", 
+                    "성별", 
+                    "생년월일(연령)", 
+                    "주소", 
+                    "직업", 
+                    "학력", 
+                    "경력", 
+                    "재산신고액(천원)", 
+                    "병역신고사항(본인)", 
+                    "납부액", 
+                    "최근5년간체납액", 
+                    "현체납액", 
+                    "전과기록유무(건수)", 
+                    "입후보횟수"]
+
+    rows = table.css('tbody tr')
+    text_all_rows = rows.map do |row|
+      row_values = []
+
+      row.css('td').each do |r|
         unless r.at_css('input')&.attr('src').present?
           row_values << r.text.gsub(/\t|\n|\r/, '')
         else  # photo

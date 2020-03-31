@@ -28,9 +28,13 @@
 #  tax_payment        :string(255)      default("")
 #  latest_arrears     :string(255)      default("")
 #  arrears            :string(255)      default("")
+#  candidate_type     :integer
+#  party_number       :integer
 #
 
 class Candidate < ApplicationRecord
+  enum candidate_type: [:formal, :proportional]
+
   has_many :photos,
            as: :context,
            dependent: :destroy,
@@ -83,7 +87,11 @@ class Candidate < ApplicationRecord
   has_many :likes, as: :context, dependent: :destroy, inverse_of: :context
   has_many :followers, through: :likes, source: :user
 
-  belongs_to :voting_district, class_name: 'VotingDistrict', :foreign_key => :code_id
+  # 선거구
+  belongs_to :voting_district, class_name: 'VotingDistrict', :foreign_key => :code_id, optional: true
+
+  # 정당 : 비례정당 후보만 속함.
+  belongs_to :political_party, class_name: 'PoliticalParty', :foreign_key => :code_id, optional: true
 
 end
 

@@ -4,6 +4,113 @@
 #Examples:
 #
 
+# 비례정당 : # proportional_party
+# 100  더불어민주당
+# 200  미래통합당
+# 2080 민생당
+# 5037 미래한국당
+# 5048 더불어시민당
+# 730  정의당
+# 5000 우리공화당
+# 5010 민중당
+# 3060 한국경제당
+# 5040 국민의당
+# 5044 친박신당
+# 5049 열린민주당
+# 1970 코리아
+# 3070 가자!평화인권당
+# 5039 가자환경당
+# 2010 공화당
+# 5031 국가혁명배당금당
+# 4080 국민새정당
+# 2070 국민참여신당
+# 2020 기독당
+# 3040 기독자유통일당
+# 5035 기본소득당
+# 5052 깨어있는시민연대당
+# 5051 남북통일당
+# 1988 노동당
+# 710  녹색당
+# 3010 대한당
+# 650  대한민국당
+# 4040 미래당
+# 5047 미래민주당
+# 1980 미래자영업당
+# 4010 민중민주당
+# 700  사이버모바일국민정책당
+# 4070 새누리당
+# 5042 시대전환
+# 5046 여성의당
+# 5053 우리당
+# 5043 자유당
+# 5030 새벽당
+# 5050 정치개혁연합
+# 5045 자영업당
+# 5033 직능자영업당
+# 5041 충청의미래당
+# 2000 친박연대
+# 2060 통일민주당
+# 4000 통합민주당
+# 2050 한국국민당
+# 3000 한국복지당
+# 1990 한나라당
+# 3050 한반도미래연합
+# 4060 홍익당
+
+PoliticalParty.create(code:100 ,name1:'더불어민주당')
+PoliticalParty.create(code:200 ,name1:'미래통합당')
+PoliticalParty.create(code:2080,name1:'민생당')
+PoliticalParty.create(code:5037,name1:'미래한국당')
+PoliticalParty.create(code:5048,name1:'더불어시민당')
+PoliticalParty.create(code:730 ,name1:'정의당')
+PoliticalParty.create(code:5000,name1:'우리공화당')
+PoliticalParty.create(code:5010,name1:'민중당')
+PoliticalParty.create(code:3060,name1:'한국경제당')
+PoliticalParty.create(code:5040,name1:'국민의당')
+PoliticalParty.create(code:5044,name1:'친박신당')
+PoliticalParty.create(code:5049,name1:'열린민주당')
+PoliticalParty.create(code:1970,name1:'코리아')
+PoliticalParty.create(code:3070,name1:'가자!평화인권당')
+PoliticalParty.create(code:5039,name1:'가자환경당')
+PoliticalParty.create(code:2010,name1:'공화당')
+PoliticalParty.create(code:5031,name1:'국가혁명배당금당')
+PoliticalParty.create(code:4080,name1:'국민새정당')
+PoliticalParty.create(code:2070,name1:'국민참여신당')
+PoliticalParty.create(code:2020,name1:'기독당')
+PoliticalParty.create(code:3040,name1:'기독자유통일당')
+PoliticalParty.create(code:5035,name1:'기본소득당')
+PoliticalParty.create(code:5052,name1:'깨어있는시민연대당')
+PoliticalParty.create(code:5051,name1:'남북통일당')
+PoliticalParty.create(code:1988,name1:'노동당')
+PoliticalParty.create(code:710 ,name1:'녹색당')
+PoliticalParty.create(code:3010,name1:'대한당')
+PoliticalParty.create(code:650 ,name1:'대한민국당')
+PoliticalParty.create(code:4040,name1:'미래당')
+PoliticalParty.create(code:5047,name1:'미래민주당')
+PoliticalParty.create(code:1980,name1:'미래자영업당')
+PoliticalParty.create(code:4010,name1:'민중민주당')
+PoliticalParty.create(code:700 ,name1:'사이버모바일국민정책당')
+PoliticalParty.create(code:4070,name1:'새누리당')
+PoliticalParty.create(code:5042,name1:'시대전환')
+PoliticalParty.create(code:5046,name1:'여성의당')
+PoliticalParty.create(code:5053,name1:'우리당')
+PoliticalParty.create(code:5043,name1:'자유당')
+PoliticalParty.create(code:5030,name1:'새벽당')
+PoliticalParty.create(code:5050,name1:'정치개혁연합')
+PoliticalParty.create(code:5045,name1:'자영업당')
+PoliticalParty.create(code:5033,name1:'직능자영업당')
+PoliticalParty.create(code:5041,name1:'충청의미래당')
+PoliticalParty.create(code:2000,name1:'친박연대')
+PoliticalParty.create(code:2060,name1:'통일민주당')
+PoliticalParty.create(code:4000,name1:'통합민주당')
+PoliticalParty.create(code:2050,name1:'한국국민당')
+PoliticalParty.create(code:3000,name1:'한국복지당')
+PoliticalParty.create(code:1990,name1:'한나라당')
+PoliticalParty.create(code:3050,name1:'한반도미래연합')
+PoliticalParty.create(code:4060,name1:'홍익당')
+exit!
+
+
 Election.create(name1:'국회의원선거',code:2)
 Election.create(name1:'구/시/군의장선거',code:4)
 Election.create(name1:'시/도의회의원선거',code:5)

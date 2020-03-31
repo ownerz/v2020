@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_27_004026) do
+ActiveRecord::Schema.define(version: 2020_03_31_051043) do
 
-  create_table "boards", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "boards", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.integer "board_type"
     t.string "title", null: false
     t.text "body"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 2020_03_27_004026) do
     t.string "image", limit: 1000
   end
 
-  create_table "candidates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "candidates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "code_id"
     t.string "electoral_district", default: "", comment: "선거구명"
     t.string "party", default: "", comment: "소속정당명"
@@ -50,18 +50,21 @@ ActiveRecord::Schema.define(version: 2020_03_27_004026) do
     t.string "tax_payment", default: ""
     t.string "latest_arrears", default: ""
     t.string "arrears", default: ""
+    t.integer "candidate_type"
+    t.integer "party_number", default: 0
     t.index ["code_id"], name: "index_candidates_on_code_id"
   end
 
-  create_table "codes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "codes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "type", null: false
     t.string "name1", default: "", comment: "이름"
     t.string "name2", default: "", comment: "이름"
     t.integer "code", null: false, comment: "코드"
     t.bigint "parent_id"
+    t.integer "number"
   end
 
-  create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "commentable_type"
     t.bigint "commentable_id"
     t.bigint "user_id"
@@ -73,7 +76,7 @@ ActiveRecord::Schema.define(version: 2020_03_27_004026) do
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
-  create_table "congressmen", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "congressmen", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "code_id"
     t.string "electoral_district", default: "", comment: "선거구명"
     t.string "party", default: "", comment: "소속정당명"
@@ -91,7 +94,7 @@ ActiveRecord::Schema.define(version: 2020_03_27_004026) do
     t.index ["code_id"], name: "index_congressmen_on_code_id"
   end
 
-  create_table "district_details", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "district_details", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "code_id"
     t.integer "district_count", null: false, comment: "읍면동수"
     t.integer "voting_district_count", null: false, comment: "투표구수"
@@ -106,7 +109,7 @@ ActiveRecord::Schema.define(version: 2020_03_27_004026) do
     t.index ["code_id"], name: "index_district_details_on_code_id"
   end
 
-  create_table "likes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "likes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "context_type"
     t.bigint "context_id"
     t.bigint "user_id"
@@ -116,7 +119,7 @@ ActiveRecord::Schema.define(version: 2020_03_27_004026) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
-  create_table "photos", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "photos", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "context_type"
     t.bigint "context_id"
     t.integer "photo_type", null: false
@@ -127,13 +130,13 @@ ActiveRecord::Schema.define(version: 2020_03_27_004026) do
     t.index ["context_type", "context_id"], name: "index_photos_on_context_type_and_context_id"
   end
 
-  create_table "temp_candidates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "temp_candidates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "electoral_district", default: "", comment: "선거구명"
     t.string "party", default: "", comment: "소속정당명"
     t.string "name", default: "", comment: "성명"
   end
 
-  create_table "user_audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "user_audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "device_id", null: false
     t.string "request_url", null: false
     t.text "geo_info"
@@ -150,7 +153,7 @@ ActiveRecord::Schema.define(version: 2020_03_27_004026) do
     t.index ["device_id"], name: "index_user_audits_on_device_id"
   end
 
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci", force: :cascade do |t|
     t.string "device_id", null: false
     t.integer "age", default: 0
     t.integer "sex", default: 0

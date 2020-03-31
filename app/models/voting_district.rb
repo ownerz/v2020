@@ -8,6 +8,7 @@
 #  name2     :string(255)      default("")
 #  code      :integer          not null
 #  parent_id :bigint
+#  number    :integer
 #
 
 class VotingDistrict < Code

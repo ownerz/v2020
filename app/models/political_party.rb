@@ -11,6 +11,7 @@
 #  number    :integer
 #
 
-class Code < ApplicationRecord
+class PoliticalParty < Code 
+  has_many :candidates, -> {order('number*1 asc')}, :foreign_key => :code_id
 
 end
