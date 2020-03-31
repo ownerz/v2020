@@ -280,7 +280,7 @@ class CrawleringService
               c.political_party.number = party_array[1].to_i
               c.political_party.save!
             end
-            
+
             c.candidate_type = :proportional
             c.party_number = party_array[1].to_i # 정당 기호
             # c.voting_district = voting_district
@@ -310,8 +310,7 @@ class CrawleringService
           # end
         end
       end
-      byebug
-      sleep 10
+      sleep 15
     end
   end
 
