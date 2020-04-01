@@ -1,9 +1,9 @@
-# @server = http://localhost:3000
-# @device-id= 1110115
+@server = http://localhost:3000
+@device-id= 1110115
 
 # @server = http://13.209.167.197
-@server = http://api.v2020.ownerz.io
-@device-id= 9cb1bac632cd3bfd
+# @server = http://api.v2020.ownerz.io
+# @device-id= 9cb1bac632cd3bfd
 
 # @server = http://ssm-imgproxy-qav1.ap-northeast-2.elasticbeanstalk.com
 # @device-id= 9cb1bac632cd3bfd
@@ -119,7 +119,7 @@ device-id: {{device-id}}
 #
 # 비례후보 요청
 # GET {{server}}/api/v1/candidates?page=1&per=10&candidate_type=proportional&party_number=3
-GET {{server}}/api/v1/candidates?page=1&per=10&party_number=3
+GET {{server}}/api/v1/candidates?party_number=4&page=1&per=50
 # GET {{server}}/api/v1/candidates
 # GET {{server}}/api/v1/candidates?page=1&per=10&x=129.014032&y=35.412894
 # GET {{server}}/api/v1/candidates?page=1&per=10&x=126.973457&y=37.555465

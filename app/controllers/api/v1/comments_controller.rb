@@ -28,7 +28,7 @@ module Api
 
       def index
         @comments = Comment.where(user: @current_user)
-        @comments = @comments.page(params[:page]).per(params[:per_page])
+        @comments = @comments.page(params[:page]).per(params[:per])
       rescue
         render_error :unprocessable_entity, e
       end

@@ -21,7 +21,7 @@ module Api
           @candidates = @district.present?? Candidate.where(voting_district: @district) : Candidate.all
           @candidates = @candidates.order('number*1 asc')
         end
-        @candidates = @candidates.page(params[:page]).per(params[:per_page])
+        @candidates = @candidates.page(params[:page]).per(params[:per])
         @meta = get_page_info(@candidates).merge(meta_status)
       end
 

@@ -24,7 +24,7 @@ module ApplicationHelper
 
   # 각종 List 화면에서 번호를 지정할 때 사용하는 구문 @jpseo 딜리버드 주문 카운트 컬럼명 중복으로 데이터가 나오지 않아 주석 처리
   #def item_count(count, param = :page)
-  #  ((params[param] || 1).to_i * (params[:per_page] || 25).to_i - (params[:per_page] || 25).to_i) + count + 1
+  #  ((params[param] || 1).to_i * (params[:per] || 25).to_i - (params[:per] || 25).to_i) + count + 1
   #end
 
   def get_filename(url)

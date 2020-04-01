@@ -11,7 +11,7 @@ module Api
 
       # city list
       def cities
-        @cities = City.page(params[:page]).per(params[:per_page])
+        @cities = City.page(params[:page]).per(params[:per])
         @meta = get_page_info(@cities).merge(meta_status)
       end
 
@@ -26,7 +26,7 @@ module Api
           @voting_districts = @district.present?? VotingDistrict.where(id: @district) : VotingDistrict.all
         end
 
-        @voting_districts = @voting_districts.page(params[:page]).per(params[:per_page])
+        @voting_districts = @voting_districts.page(params[:page]).per(params[:per])
         @meta = get_page_info(@voting_districts).merge(meta_status)
       end
 
