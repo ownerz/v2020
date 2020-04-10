@@ -455,7 +455,7 @@ class CrawleringService
           candidates.each do |candidate|
             electoral_district = candidate.dig('선거구명').gsub(' ', '')
             party = candidate.dig('소속정당명').gsub(' ', '')
-            name = candidate.dig('성명(한자)').gsub(' ', '')
+            name = candidate.dig('성명(한자)').gsub(' ', '').delete('공약보기')
             birth_date = candidate.dig('생년월일(연령)').gsub(' ', '')
 
             c = Candidate.find_or_initialize_by(electoral_district: electoral_district,

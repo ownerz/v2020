@@ -1,9 +1,9 @@
-@server = http://localhost:3000
-@device-id= 1110115
+# @server = http://localhost:3000
+# @device-id= 1110115
 
 # @server = http://13.209.167.197
-# @server = http://api.v2020.ownerz.io
-# @device-id= 9cb1bac632cd3bfd
+@server = http://api.v2020.ownerz.io
+@device-id= 9cb1bac632cd3bfd
 
 # @server = http://ssm-imgproxy-qav1.ap-northeast-2.elasticbeanstalk.com
 # @device-id= 9cb1bac632cd3bfd
@@ -107,7 +107,8 @@ device-id: {{device-id}}
 # 선거구 
 # GET {{server}}/api/v1/voting_districts?page=1&per=10&x=126.973457&y=37.555465
 # GET {{server}}/api/v1/voting_districts?page=1&per=10&x=126.9305023&y=37.4030928
-GET {{server}}/api/v1/voting_districts?page=1&per=10
+# GET {{server}}/api/v1/voting_districts?page=1&per=10
+GET {{server}}/api/v1/voting_districts/58
 Content-Type: application/json
 device-id: {{device-id}}
 

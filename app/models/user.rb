@@ -17,7 +17,7 @@ class User < ApplicationRecord
   validates :device_id, uniqueness: true
 
   enum age: [:twenteen , :thirty, :fourty, :fifty, :sixty]
-  enum sex: [:woman, :man]
+  enum sex: [:woman, :man, :none]
 
   # user likes someone
   has_many :likes, dependent: :destroy
