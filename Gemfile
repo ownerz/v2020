@@ -70,7 +70,7 @@ gem 'rack-attack', '~> 5.0'
 gem 'rack-cors', require: 'rack/cors'
 
 # pagenation
-gem 'kaminari', '~> 1.1.1'
+gem 'kaminari', '~> 1.2.1'
 
 gem 'goldiloader', '~> 3.1', '>= 3.1.1'
 gem 'oj', '~> 3.9', '>= 3.9.2'
